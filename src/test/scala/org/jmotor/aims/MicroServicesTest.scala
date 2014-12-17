@@ -1,5 +1,6 @@
 package org.jmotor.aims
 
+import akka.actor.Props
 import org.scalatest.FunSuite
 
 /**
@@ -10,6 +11,8 @@ import org.scalatest.FunSuite
  */
 class MicroServicesTest extends FunSuite {
   test("Start micro services") {
-
+    val aims = Aims("uuid-services")
+    aims.registerService("/uuid", Props[UUIDService])
+    aims.startup()
   }
 }
