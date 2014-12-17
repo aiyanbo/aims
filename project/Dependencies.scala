@@ -6,8 +6,8 @@ object Version {
   val scalaTest = "2.2.2"
 }
 
-object Components {
-  val dependencies = List(
+object Dependencies {
+  val libraries = List(
     "com.typesafe.akka" %% "akka-actor" % Version.akka withSources(),
     "com.typesafe.akka" %% "akka-stream-experimental" % Version.akkaHttp withSources(),
     "com.typesafe.akka" %% "akka-http-core-experimental" % Version.akkaHttp withSources(),
