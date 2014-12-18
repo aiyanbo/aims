@@ -8,6 +8,7 @@ import akka.stream.FlowMaterializer
 import akka.util.Timeout
 import org.jmotor.aims.core.{InternalServiceApi, ServiceApi, ServiceEngine}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
