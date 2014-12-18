@@ -9,4 +9,4 @@ import akka.http.model.HttpRequest
  * Date: 2014/12/17
  * @author Andy Ai
  */
-case class ServiceRequest(original: ActorRef, request: HttpRequest)
+case class ServiceRequest(original: ActorRef, request: HttpRequest, pathParameters: Map[String, String])
