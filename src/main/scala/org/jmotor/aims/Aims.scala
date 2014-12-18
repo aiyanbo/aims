@@ -3,9 +3,13 @@ package org.jmotor.aims
 import akka.actor.{ActorSystem, Props}
 import akka.http.Http
 import akka.http.model._
+import akka.pattern.ask
 import akka.stream.FlowMaterializer
 import akka.util.Timeout
 import org.jmotor.aims.core.{InternalServiceApi, ServiceApi, ServiceEngine}
+
+import scala.concurrent.Future
+import scala.concurrent.duration._
 
 
 /**
