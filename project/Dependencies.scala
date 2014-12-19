@@ -13,4 +13,6 @@ object Dependencies {
     "com.typesafe.akka" %% "akka-http-core-experimental" % Version.akkaHttp withSources(),
     "org.scalatest" %% "scalatest" % Version.scalaTest % "test" withSources()
   )
+
+  val resolvers = List("sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases/")
 }

@@ -23,7 +23,6 @@ class ServiceEngine(services: Map[String, InternalServiceApi]) extends Actor wit
         val parameters = path.split("/")
         actors.getOrElseUpdate(service.pattern, context.actorOf(service.props)) ! ServiceRequest(sender(), request, service.parameters.mapValues(parameters(_)))
       }
-
     case default => log.warning(s"Unsupported request: ${default.getClass}")
   }
 }
