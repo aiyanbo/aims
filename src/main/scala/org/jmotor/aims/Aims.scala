@@ -1,17 +1,16 @@
 package org.jmotor.aims
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{ ActorSystem, Props }
 import akka.http.Http
 import akka.http.model._
 import akka.pattern.ask
 import akka.stream.FlowMaterializer
 import akka.util.Timeout
-import org.jmotor.aims.core.{InternalServiceApi, ServiceApi, ServiceEngine}
+import org.jmotor.aims.core.{ InternalServiceApi, ServiceApi, ServiceEngine }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
-
 
 /**
  * Component:
@@ -28,15 +27,15 @@ private[aims] class Aims(name: String) {
   def startup(): Unit = {
     val serverEngine = system.actorOf(ServiceEngine.props(services.toMap), "aims-engine")
 
-    val requestHandler: HttpRequest => Future[HttpResponse] = {
-      case HttpRequest(HttpMethods.GET, Uri.Path("/favicon.ico"), _, _, _) =>
+    val requestHandler: HttpRequest ⇒ Future[HttpResponse] = {
+      case HttpRequest(HttpMethods.GET, Uri.Path("/favicon.ico"), _, _, _) ⇒
         Future(HttpResponse(status = StatusCodes.OK))
-      case request: HttpRequest => (serverEngine ? request).map(_.asInstanceOf[HttpResponse])
-      case _ => Future(HttpResponse(StatusCodes.NotFound, entity = "Unknown resource!"))
+      case request: HttpRequest ⇒ (serverEngine ? request).map(_.asInstanceOf[HttpResponse])
+      case _                    ⇒ Future(HttpResponse(StatusCodes.NotFound, entity = "Unknown resource!"))
     }
 
     val serverBinding = Http(system).bind(interface = "localhost", port = 8080)
-    for (connection <- serverBinding.connections) {
+    for (connection ← serverBinding.connections) {
       println("Accepted new connection from " + connection.remoteAddress)
       connection handleWithAsyncHandler requestHandler
     }
@@ -46,13 +45,13 @@ private[aims] class Aims(name: String) {
     val pattern = service.method.name + "::" + service.pattern
     val tokens = pattern.split("/")
     val m = scala.collection.mutable.HashMap[String, Int]()
-    for (i <- 0 to (tokens.length - 1)) {
+    for (i ← 0 to (tokens.length - 1)) {
       val token = tokens(i)
-      if (token.matches( """:\w+(=>Number)?""")) {
-        m.put( """\w+""".r.findFirstIn(token).get, i)
+      if (token.matches(""":\w+(=>Number)?""")) {
+        m.put("""\w+""".r.findFirstIn(token).get, i)
       }
     }
-    val p = pattern.replaceAll( """:\w+=>Number""", "\\\\d+").replaceAll( """:\w+""", "\\\\w+-?\\\\w+")
+    val p = pattern.replaceAll(""":\w+=>Number""", "\\\\d+").replaceAll(""":\w+""", "\\\\w+-?\\\\w+")
     services.put(p, InternalServiceApi(service, m.toMap))
   }
 

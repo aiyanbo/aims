@@ -1,7 +1,7 @@
 package org.jmotor.aims.core
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
-import akka.http.model.{HttpRequest, HttpResponse}
+import akka.actor.{ Actor, ActorLogging, ActorRef, Props }
+import akka.http.model.{ HttpRequest, HttpResponse }
 
 /**
  * Component:
@@ -13,9 +13,9 @@ class ServiceEngine(services: Map[String, InternalServiceApi]) extends Actor wit
   private val actors = scala.collection.mutable.HashMap[String, ActorRef]()
 
   override def receive: Receive = {
-    case request: HttpRequest =>
+    case request: HttpRequest ⇒
       val path = request.method.name + "::" + request.uri.path.toString
-      val res = services.filterKeys(pattern => path.matches(pattern))
+      val res = services.filterKeys(pattern ⇒ path.matches(pattern))
       if (res.isEmpty) {
         sender() ! HttpResponse(404)
       } else {
@@ -23,7 +23,7 @@ class ServiceEngine(services: Map[String, InternalServiceApi]) extends Actor wit
         val parameters = path.split("/")
         actors.getOrElseUpdate(service.pattern, context.actorOf(service.props)) ! ServiceRequest(sender(), request, service.parameters.mapValues(parameters(_)))
       }
-    case default => log.warning(s"Unsupported request: ${default.getClass}")
+    case default ⇒ log.warning(s"Unsupported request: ${default.getClass}")
   }
 }
 
