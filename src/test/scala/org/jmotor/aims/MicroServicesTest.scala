@@ -1,6 +1,5 @@
 package org.jmotor.aims
 
-import akka.actor.Props
 import org.scalatest.FunSuite
 
 
@@ -13,23 +12,23 @@ import org.scalatest.FunSuite
 class MicroServicesTest extends FunSuite {
   test("Start micro services") {
     val aims = Aims("uuid-services")
-    aims.registerService("/uuid", Props[UUIDService])
+    aims.registerService(new UUIDService)
     aims.startup()
+//    aims.awaitShutdown
   }
 
   test("Regex") {
-    val pattern = "GET::/systems/:systemId=>Number/applications/:applicationId/star"
-    val r = """:\w+(=>Number)?"""
+    val pattern = "GET::/systems/#systemId/applications/:applicationId/star"
 
     val tokens = pattern.split("/")
     val m = scala.collection.mutable.HashMap[String, Int]()
     for (i <- 0 to (tokens.length - 1)) {
       val token = tokens(i)
-      if (token.matches( """:\w+(=>Number)?""")) {
+      if (token.matches( """(:|#)\w+""")) {
         m.put( """\w+""".r.findFirstIn(token).get, i)
       }
     }
-    val p = pattern.replaceAll( """:\w+=>Number""", "\\\\d+").replaceAll( """:\w+""", "\\\\w+-?\\\\w+")
+    val p = pattern.replaceAll( """#\w+""", "\\\\d+").replaceAll( """:\w+""", "\\\\w+-?\\\\w+")
 
     val path = "GET::/systems/12345/applications/ws-456s/star"
 

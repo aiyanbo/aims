@@ -1,7 +1,9 @@
 package org.jmotor.aims.core
 
 import akka.actor.{ Actor, ActorLogging, ActorRef, Props }
-import akka.http.model.{ HttpRequest, HttpResponse }
+import akka.http.model.{ HttpRequest, HttpResponse, StatusCodes }
+import org.jmotor.aims.core.Resources.{ Resource, ResourceMirror }
+import org.jmotor.aims.parser.PatternParser
 
 /**
  * Component:
@@ -9,26 +11,34 @@ import akka.http.model.{ HttpRequest, HttpResponse }
  * Date: 2014/12/17
  * @author Andy Ai
  */
-class ServiceEngine(services: Map[String, InternalServiceApi]) extends Actor with ActorLogging {
+class ServiceEngine(resources: List[Resource]) extends Actor with ActorLogging {
   private val actors = scala.collection.mutable.HashMap[String, ActorRef]()
+  private val mirrors: Map[String, ResourceMirror] =
+    resources.map(resource ⇒ {
+      val res = PatternParser.parse(resource.pattern)
+      val matcher = resource.method.name + "::" + res._1
+      (matcher, ResourceMirror(resource.pattern, matcher, resource.method, MicroService.props(resource.handler), res._2,
+        resource.consumerTypes, resource.producerTypes))
+    }).toMap
 
   override def receive: Receive = {
     case request: HttpRequest ⇒
       val path = request.method.name + "::" + request.uri.path.toString
-      val res = services.filterKeys(pattern ⇒ path.matches(pattern))
-      if (res.isEmpty) {
-        sender() ! HttpResponse(404)
+      val filteredMirrors = mirrors.filterKeys(pattern ⇒ path.matches(pattern))
+      if (filteredMirrors.isEmpty) {
+        sender() ! HttpResponse(StatusCodes.NotFound)
       } else {
-        val service = res.values.headOption.get
+        val mirror = filteredMirrors.values.headOption.get
         val parameters = path.split("/")
-        actors.getOrElseUpdate(service.pattern, context.actorOf(service.props)) ! ServiceRequest(sender(), request, service.parameters.mapValues(parameters(_)))
+        val actorName = mirror.method.name + mirror.pattern.replace("/", "-")
+        val req: ServiceRequest = ServiceRequest(sender(), request, mirror.parameters.mapValues(parameters(_)))
+        actors.getOrElseUpdate(mirror.pattern, context.actorOf(mirror.props, actorName)) ! req
       }
-    case default ⇒ log.warning(s"Unsupported request: ${default.getClass}")
   }
 }
 
 object ServiceEngine {
-  def props(services: Map[String, InternalServiceApi]): Props = {
-    Props(new ServiceEngine(services))
+  def props(resources: List[Resource]): Props = {
+    Props(new ServiceEngine(resources))
   }
 }

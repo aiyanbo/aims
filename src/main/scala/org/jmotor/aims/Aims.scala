@@ -1,13 +1,15 @@
 package org.jmotor.aims
 
-import akka.actor.{ ActorSystem, Props }
+import akka.actor.ActorSystem
 import akka.http.Http
 import akka.http.model._
 import akka.pattern.ask
 import akka.stream.FlowMaterializer
 import akka.util.Timeout
-import org.jmotor.aims.core.{ InternalServiceApi, ServiceApi, ServiceEngine }
+import org.jmotor.aims.core.Resources.Resource
+import org.jmotor.aims.core.{ Service, ServiceEngine }
 
+import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -19,13 +21,14 @@ import scala.concurrent.duration._
  * @author Andy Ai
  */
 private[aims] class Aims(name: String) {
-  private val services = scala.collection.mutable.HashMap[String, InternalServiceApi]()
   implicit val system = ActorSystem(name)
   implicit val materializer = FlowMaterializer()
   implicit val timeout: Timeout = 5000.millis
 
+  private val resources = ListBuffer[Resource]()
+
   def startup(): Unit = {
-    val serverEngine = system.actorOf(ServiceEngine.props(services.toMap), "aims-engine")
+    val serverEngine = system.actorOf(ServiceEngine.props(resources.toList), "aims-engine")
 
     val requestHandler: HttpRequest ⇒ Future[HttpResponse] = {
       case HttpRequest(HttpMethods.GET, Uri.Path("/favicon.ico"), _, _, _) ⇒
@@ -41,22 +44,8 @@ private[aims] class Aims(name: String) {
     }
   }
 
-  def registerService(service: ServiceApi): Unit = {
-    val pattern = service.method.name + "::" + service.pattern
-    val tokens = pattern.split("/")
-    val m = scala.collection.mutable.HashMap[String, Int]()
-    for (i ← 0 to (tokens.length - 1)) {
-      val token = tokens(i)
-      if (token.matches(""":\w+(=>Number)?""")) {
-        m.put("""\w+""".r.findFirstIn(token).get, i)
-      }
-    }
-    val p = pattern.replaceAll(""":\w+=>Number""", "\\\\d+").replaceAll(""":\w+""", "\\\\w+-?\\\\w+")
-    services.put(p, InternalServiceApi(service, m.toMap))
-  }
-
-  def registerService(pattern: String, props: Props): Unit = {
-    registerService(new ServiceApi(pattern, HttpMethods.GET, props))
+  def registerService(service: Service): Unit = {
+    resources += service.resource()
   }
 
   lazy val shutdown = system.shutdown()

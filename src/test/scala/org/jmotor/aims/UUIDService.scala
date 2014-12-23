@@ -2,8 +2,8 @@ package org.jmotor.aims
 
 import java.util.UUID
 
-import akka.http.model.HttpRequest
-import org.jmotor.aims.core.RequestHandler
+import org.jmotor.aims.core.Service
+import org.jmotor.aims.core.Service.Handler
 
 /**
  * Component:
@@ -11,8 +11,14 @@ import org.jmotor.aims.core.RequestHandler
  * Date: 2014/12/17
  * @author Andy Ai
  */
-class UUIDService extends RequestHandler {
-  override def handle(request: HttpRequest): Any = {
-    UUID.randomUUID().toString
+class UUIDService extends Service {
+
+
+  override def pattern(): String = {
+    "/uuid/gen"
+  }
+
+  override def handler: Handler = {
+    case _ => UUID.randomUUID().toString
   }
 }
