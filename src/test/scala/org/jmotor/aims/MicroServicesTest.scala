@@ -2,7 +2,6 @@ package org.jmotor.aims
 
 import org.scalatest.FunSuite
 
-
 /**
  * Component:
  * Description:
@@ -15,7 +14,7 @@ class MicroServicesTest extends FunSuite {
     aims.registerService(new UUIDService)
     aims.registerService(new CouponOperationResource)
     aims.startup()
-    aims.awaitShutdown
+    //    aims.awaitShutdown
   }
 
   test("Regex") {
@@ -23,21 +22,21 @@ class MicroServicesTest extends FunSuite {
 
     val tokens = pattern.split("/")
     val m = scala.collection.mutable.HashMap[String, Int]()
-    for (i <- 0 to (tokens.length - 1)) {
+    for (i ← 0 to (tokens.length - 1)) {
       val token = tokens(i)
-      if (token.matches( """(:|#)\w+""")) {
-        m.put( """\w+""".r.findFirstIn(token).get, i)
+      if (token.matches("""(:|#)\w+""")) {
+        m.put("""\w+""".r.findFirstIn(token).get, i)
       }
     }
-    val p = pattern.replaceAll( """#\w+""", "\\\\d+").replaceAll( """:\w+""", "\\\\w+-?\\\\w+")
+    val p = pattern.replaceAll("""#\w+""", "\\\\d+").replaceAll(""":\w+""", "\\\\w+-?\\\\w+")
 
     val path = "GET::/systems/12345/applications/ws-456s/star"
 
-    m.foreach(e => println(e._1, e._2))
+    m.foreach(e ⇒ println(e._1, e._2))
 
     if (path.matches(p)) {
       val ts = path.split("/")
-      m.mapValues(ts(_)).foreach(e => println(s"k: ${e._1}, v: ${e._2}"))
+      m.mapValues(ts(_)).foreach(e ⇒ println(s"k: ${e._1}, v: ${e._2}"))
     }
   }
 }

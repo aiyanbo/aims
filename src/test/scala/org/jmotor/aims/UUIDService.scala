@@ -13,12 +13,11 @@ import org.jmotor.aims.core.Service.Handler
  */
 class UUIDService extends Service {
 
-
   override def pattern(): String = {
     "/uuid/gen"
   }
 
   override def handler: Handler = {
-    case _ => UUID.randomUUID().toString
+    case _ ⇒ UUID.randomUUID().toString
   }
 }
