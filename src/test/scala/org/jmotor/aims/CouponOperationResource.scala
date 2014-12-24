@@ -19,10 +19,12 @@ class CouponOperationResource extends OperationService {
   }
 
   override def insert(pathParameters: Map[String, String], entity: Any): Any = {
-    "you-are-insert-success"
+    entity match {
+      case str: String ⇒ println(str)
+    }
   }
 
-  override def get(pathParameters: Map[String, String]): Any = {
+  override def get(pathParameters: Map[String, String]): Coupon = {
     Coupon(1, UUID.randomUUID().toString)
   }
 

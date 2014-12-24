@@ -5,6 +5,7 @@ import akka.http.model.HttpMethods._
 import akka.http.model.MediaTypes._
 import akka.http.model.StatusCodes._
 import akka.http.model._
+import akka.http.model.japi.HttpEntityStrict
 import org.jmotor.aims.core.Resources.Resource
 import org.jmotor.aims.json.Jackson
 
@@ -46,8 +47,8 @@ trait OperationService {
     case request: ServiceRequest ⇒
       request.request.method match {
         case GET    ⇒ get(request.pathParameters)
-        case PUT    ⇒ update(request.pathParameters, null)
-        case POST   ⇒ insert(request.pathParameters, null)
+        case PUT    ⇒ update(request.pathParameters, request.request.entity.asInstanceOf[HttpEntityStrict].data().utf8String)
+        case POST   ⇒ insert(request.pathParameters, request.request.entity.asInstanceOf[HttpEntityStrict].data().utf8String)
         case DELETE ⇒ delete(request.pathParameters)
         case _      ⇒ HttpResponse(StatusCodes.MethodNotAllowed)
       }
