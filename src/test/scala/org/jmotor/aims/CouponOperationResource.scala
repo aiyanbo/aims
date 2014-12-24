@@ -1,6 +1,9 @@
 package org.jmotor.aims
 
+import java.util.UUID
+
 import org.jmotor.aims.core.OperationService
+import org.jmotor.aims.dto.Coupon
 
 /**
  * Component:
@@ -20,7 +23,7 @@ class CouponOperationResource extends OperationService {
   }
 
   override def get(pathParameters: Map[String, String]): Any = {
-    "you-are-get-success"
+    Coupon(1, UUID.randomUUID().toString)
   }
 
   override def delete(pathParameters: Map[String, String]): Unit = {

@@ -14,7 +14,7 @@ class MicroServicesTest extends FunSuite {
     aims.registerService(new UUIDService)
     aims.registerService(new CouponOperationResource)
     aims.startup()
-    //    aims.awaitShutdown
+    //        aims.awaitShutdown
   }
 
   test("Regex") {

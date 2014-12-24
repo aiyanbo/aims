@@ -2,9 +2,11 @@ package org.jmotor.aims.core
 
 import akka.actor.{ Actor, ActorLogging, Props }
 import akka.http.model.HttpMethods._
+import akka.http.model.MediaTypes._
 import akka.http.model.StatusCodes._
-import akka.http.model.{ HttpResponse, StatusCodes }
+import akka.http.model._
 import org.jmotor.aims.core.Resources.Resource
+import org.jmotor.aims.json.Jackson
 
 import scala.runtime.BoxedUnit
 
@@ -67,8 +69,8 @@ class MicroService(handler: Service.Handler) extends Actor with ActorLogging {
       handler.apply(request) match {
         case unit: BoxedUnit        ⇒ request.original ! HttpResponse(OK)
         case response: HttpResponse ⇒ request.original ! response
-        case string: String         ⇒ request.original ! HttpResponse(OK, entity = string)
-        case entity                 ⇒ request.original ! HttpResponse(OK, entity = entity.toString)
+        case string: String         ⇒ request.original ! HttpResponse(OK, entity = HttpEntity(`text/plain`, string))
+        case entity                 ⇒ request.original ! HttpResponse(OK, entity = HttpEntity(`application/json`, Jackson.mapper.writeValueAsString(entity)))
       }
   }
 }
