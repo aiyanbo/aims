@@ -11,10 +11,11 @@ import org.scalatest.FunSuite
  */
 class MicroServicesTest extends FunSuite {
   test("Start micro services") {
-    val aims = Aims("uuid-services")
+    val aims = Aims("hello-aims")
     aims.registerService(new UUIDService)
+    aims.registerService(new CouponOperationResource)
     aims.startup()
-//    aims.awaitShutdown
+    aims.awaitShutdown
   }
 
   test("Regex") {

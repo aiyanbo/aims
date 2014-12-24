@@ -30,7 +30,7 @@ class ServiceEngine(resources: List[Resource]) extends Actor with ActorLogging {
       } else {
         val mirror = filteredMirrors.values.headOption.get
         val parameters = path.split("/")
-        val actorName = mirror.method.name + mirror.pattern.replace("/", "-")
+        val actorName = mirror.method.name + mirror.pattern.replace("/", "-").replace(":", "").replace("#", "")
         val req: ServiceRequest = ServiceRequest(sender(), request, mirror.parameters.mapValues(parameters(_)))
         actors.getOrElseUpdate(mirror.pattern, context.actorOf(mirror.props, actorName)) ! req
       }

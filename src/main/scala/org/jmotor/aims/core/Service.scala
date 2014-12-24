@@ -1,8 +1,9 @@
 package org.jmotor.aims.core
 
 import akka.actor.{ Actor, ActorLogging, Props }
-import akka.http.model.HttpResponse
+import akka.http.model.HttpMethods._
 import akka.http.model.StatusCodes._
+import akka.http.model.{ HttpResponse, StatusCodes }
 import org.jmotor.aims.core.Resources.Resource
 
 import scala.runtime.BoxedUnit
@@ -27,8 +28,36 @@ trait Service {
 
 }
 
-trait OperationService extends Service {
-  def pattern(): String
+trait OperationService {
+  def patterns(): (String, String)
+
+  val pattern = patterns()
+
+  def resources(): List[Resource] = List(
+    Resource(pattern._1, POST, handler),
+    Resource(pattern._1 + pattern._2, GET, handler),
+    Resource(pattern._1 + pattern._2, PUT, handler),
+    Resource(pattern._1 + pattern._2, DELETE, handler)
+  )
+
+  def handler: Service.Handler = {
+    case request: ServiceRequest ⇒
+      request.request.method match {
+        case GET    ⇒ get(request.pathParameters)
+        case PUT    ⇒ update(request.pathParameters, null)
+        case POST   ⇒ insert(request.pathParameters, null)
+        case DELETE ⇒ delete(request.pathParameters)
+        case _      ⇒ HttpResponse(StatusCodes.MethodNotAllowed)
+      }
+  }
+
+  def get(pathParameters: Map[String, String]): Any
+
+  def insert(pathParameters: Map[String, String], entity: Any): Any
+
+  def update(pathParameters: Map[String, String], entity: Any): Unit
+
+  def delete(pathParameters: Map[String, String]): Unit
 }
 
 class MicroService(handler: Service.Handler) extends Actor with ActorLogging {

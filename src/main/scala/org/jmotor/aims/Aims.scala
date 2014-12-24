@@ -7,7 +7,7 @@ import akka.pattern.ask
 import akka.stream.FlowMaterializer
 import akka.util.Timeout
 import org.jmotor.aims.core.Resources.Resource
-import org.jmotor.aims.core.{ Service, ServiceEngine }
+import org.jmotor.aims.core.{ OperationService, Service, ServiceEngine }
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -46,6 +46,10 @@ private[aims] class Aims(name: String) {
 
   def registerService(service: Service): Unit = {
     resources += service.resource()
+  }
+
+  def registerService(service: OperationService): Unit = {
+    resources ++= service.resources()
   }
 
   lazy val shutdown = system.shutdown()
