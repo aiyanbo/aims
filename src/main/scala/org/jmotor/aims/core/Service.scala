@@ -76,10 +76,11 @@ class MicroService(handler: Service.Handler) extends Actor with ActorLogging {
       handler.apply(request) match {
         case unit: BoxedUnit        ⇒ request.original ! HttpResponse(OK)
         case response: HttpResponse ⇒ request.original ! response
-        case string: String         ⇒ request.original ! HttpResponse(OK, entity = HttpEntity(`text/plain`, string))
-        case entity                 ⇒ request.original ! HttpResponse(OK, entity = HttpEntity(`application/json`, Jackson.mapper.writeValueAsString(entity)))
+        case string: String         ⇒ request.original ! HttpResponse(OK, entity = HttpEntity(`text/plain`.withParams(Map("charset" -> "UTF-8")), string))
+        case entity                 ⇒ request.original ! HttpResponse(OK, entity = HttpEntity(`application/json`.withParams(Map("charset" -> "UTF-8")), Jackson.mapper.writeValueAsString(entity)))
       }
   }
+
 }
 
 object MicroService {
