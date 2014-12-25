@@ -14,8 +14,12 @@ import org.jmotor.aims.dto.Coupon
 class CouponOperationResource extends OperationService {
   override def patterns(): (String, String) = ("/coupons", "/#couponId")
 
-  override def update(pathParameters: Map[String, String], entity: Any): Unit = {
+  override def resourceType(): Class[Coupon] = {
+    classOf[Coupon]
+  }
 
+  override def update(pathParameters: Map[String, String], entity: Any): Unit = {
+    println(entity.getClass)
   }
 
   override def insert(pathParameters: Map[String, String], entity: Any): Any = {

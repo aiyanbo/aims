@@ -32,6 +32,8 @@ trait Service {
 }
 
 trait OperationService {
+  def resourceType(): Class[_]
+
   def patterns(): (String, String)
 
   val pattern = patterns()
@@ -47,11 +49,15 @@ trait OperationService {
     case request: ServiceRequest ⇒
       request.request.method match {
         case GET    ⇒ get(request.pathParameters)
-        case PUT    ⇒ update(request.pathParameters, request.request.entity.asInstanceOf[HttpEntityStrict].data().utf8String)
-        case POST   ⇒ insert(request.pathParameters, request.request.entity.asInstanceOf[HttpEntityStrict].data().utf8String)
+        case PUT    ⇒ update(request.pathParameters, parseJsonEntity(request))
+        case POST   ⇒ insert(request.pathParameters, parseJsonEntity(request))
         case DELETE ⇒ delete(request.pathParameters)
         case _      ⇒ HttpResponse(StatusCodes.MethodNotAllowed)
       }
+  }
+
+  private def parseJsonEntity(req: ServiceRequest): Any = {
+    Jackson.mapper.readValue(req.request.entity.asInstanceOf[HttpEntityStrict].data().utf8String, resourceType())
   }
 
   def get(pathParameters: Map[String, String]): Any
