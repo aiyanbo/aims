@@ -10,7 +10,7 @@ object AimsBuild extends Build {
     scalaVersion := "2.11.4"
   )
 
-  lazy val root = (project in file(".")).aggregate(core)
+  lazy val root = (project in file(".") settings(publish := {}, publishLocal := {})).aggregate(core)
 
   lazy val core = Project(
     id = "aims-core",
