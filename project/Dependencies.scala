@@ -4,8 +4,6 @@ import sbt._
 
 object Dependencies {
 
-  val libraries = Seq(Compile.akka, Compile.akkaStream, Compile.akkaHttp, Compile.jackson, Test.scalaTest)
-
   object Versions {
     val akka = "2.3.7"
     val jackson = "2.4.4"
@@ -24,4 +22,7 @@ object Dependencies {
     val jackson = "com.fasterxml.jackson.module" %% "jackson-module-scala" % Versions.jackson
   }
 
+  import Compile._
+
+  val core = Seq(akka, akkaStream, akkaHttp, jackson, Test.scalaTest)
 }

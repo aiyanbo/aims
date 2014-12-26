@@ -2,6 +2,6 @@ import aims._
 
 AimsBuild.buildSettings
 
-libraryDependencies ++= Dependencies.libraries
+libraryDependencies ++= Dependencies.core
 
 Formatting.formatSettings
