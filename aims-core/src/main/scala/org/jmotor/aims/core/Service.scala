@@ -31,8 +31,8 @@ trait Service {
 
 }
 
-trait OperationService {
-  def resourceType(): Class[_]
+trait OperationService[E] {
+  def resourceType(): Class[E]
 
   def patterns(): (String, String)
 
@@ -48,7 +48,10 @@ trait OperationService {
   def handler: Service.Handler = {
     case request: ServiceRequest ⇒
       request.request.method match {
-        case GET    ⇒ get(request.pathParameters)
+        case GET ⇒ get(request.pathParameters) match {
+          case Some(e) ⇒ e
+          case None    ⇒ HttpResponse(StatusCodes.NotFound)
+        }
         case PUT    ⇒ update(request.pathParameters, parseJsonEntity(request))
         case POST   ⇒ insert(request.pathParameters, parseJsonEntity(request))
         case DELETE ⇒ delete(request.pathParameters)
@@ -56,15 +59,15 @@ trait OperationService {
       }
   }
 
-  private def parseJsonEntity(req: ServiceRequest): Any = {
-    Jackson.mapper.readValue(req.request.entity.asInstanceOf[HttpEntityStrict].data().utf8String, resourceType())
+  private def parseJsonEntity(req: ServiceRequest): E = {
+    Jackson.mapper.readValue(req.request.entity.asInstanceOf[HttpEntityStrict].data().utf8String, resourceType()).asInstanceOf[E]
   }
 
-  def get(pathParameters: Map[String, String]): Any
+  def get(pathParameters: Map[String, String]): Option[E]
 
-  def insert(pathParameters: Map[String, String], entity: Any): Any
+  def insert(pathParameters: Map[String, String], entity: E): Option[E]
 
-  def update(pathParameters: Map[String, String], entity: Any): Unit
+  def update(pathParameters: Map[String, String], entity: E): Unit
 
   def delete(pathParameters: Map[String, String]): Unit
 }

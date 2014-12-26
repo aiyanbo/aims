@@ -48,7 +48,7 @@ private[aims] class Aims(name: String) {
     resources += service.resource()
   }
 
-  def registerService(service: OperationService): Unit = {
+  def registerService(service: OperationService[_]): Unit = {
     resources ++= service.resources()
   }
 

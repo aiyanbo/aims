@@ -1,7 +1,6 @@
-package org.jmotor.samples.services
+package org.jmotor.aims
 
 import org.jmotor.aims.core.OperationService
-import org.jmotor.samples.dto.Coupon
 
 /**
  * Component:
