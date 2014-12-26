@@ -1,5 +1,6 @@
 package org.jmotor.samples.services
 
+import akka.http.model.Uri.Query
 import org.jmotor.aims.core.OperationService
 import org.jmotor.samples.dto.Coupon
 
@@ -16,8 +17,13 @@ class CouponOperationResource extends OperationService[Coupon] {
     classOf[Coupon]
   }
 
-  override def get(pathParameters: Map[String, String]): Option[Coupon] = {
+
+  override def get(pathParameters: Map[String, String], query: Query): Option[Coupon] = {
     None
+  }
+
+  override def list(pathParameters: Map[String, String], query: Query): List[Coupon] = {
+    List()
   }
 
   override def update(pathParameters: Map[String, String], entity: Coupon): Unit = {

@@ -1,5 +1,6 @@
 package org.jmotor.aims
 
+import akka.http.model.Uri.Query
 import org.jmotor.aims.core.OperationService
 
 /**
@@ -15,7 +16,7 @@ class CouponOperationResource extends OperationService[Coupon] {
     classOf[Coupon]
   }
 
-  override def get(pathParameters: Map[String, String]): Option[Coupon] = {
+  override def get(pathParameters: Map[String, String], query: Query): Option[Coupon] = {
     None
   }
 
@@ -29,5 +30,9 @@ class CouponOperationResource extends OperationService[Coupon] {
 
   override def delete(pathParameters: Map[String, String]): Unit = {
 
+  }
+
+  override def list(pathParameters: Map[String, String], query: Query): List[Coupon] = {
+    List()
   }
 }

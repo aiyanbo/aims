@@ -4,6 +4,7 @@ import akka.actor.{ Actor, ActorLogging, Props }
 import akka.http.model.HttpMethods._
 import akka.http.model.MediaTypes._
 import akka.http.model.StatusCodes._
+import akka.http.model.Uri.Query
 import akka.http.model._
 import akka.http.model.japi.HttpEntityStrict
 import org.jmotor.aims.core.Resources.Resource
@@ -40,6 +41,7 @@ trait OperationService[E] {
 
   def resources(): List[Resource] = List(
     Resource(pattern._1, POST, handler),
+    Resource(pattern._1, GET, handler),
     Resource(pattern._1 + pattern._2, GET, handler),
     Resource(pattern._1 + pattern._2, PUT, handler),
     Resource(pattern._1 + pattern._2, DELETE, handler)
@@ -48,7 +50,9 @@ trait OperationService[E] {
   def handler: Service.Handler = {
     case request: ServiceRequest ⇒
       request.request.method match {
-        case GET ⇒ get(request.pathParameters) match {
+        case GET if request.pattern == pattern._1 ⇒
+          list(request.pathParameters, request.request.uri.query)
+        case GET ⇒ get(request.pathParameters, request.request.uri.query) match {
           case Some(e) ⇒ e
           case None    ⇒ HttpResponse(StatusCodes.NotFound)
         }
@@ -63,13 +67,15 @@ trait OperationService[E] {
     Jackson.mapper.readValue(req.request.entity.asInstanceOf[HttpEntityStrict].data().utf8String, resourceType()).asInstanceOf[E]
   }
 
-  def get(pathParameters: Map[String, String]): Option[E]
+  def get(pathParameters: Map[String, String], query: Query): Option[E]
 
   def insert(pathParameters: Map[String, String], entity: E): Option[E]
 
   def update(pathParameters: Map[String, String], entity: E): Unit
 
   def delete(pathParameters: Map[String, String]): Unit
+
+  def list(pathParameters: Map[String, String], query: Query): List[E]
 }
 
 class MicroService(handler: Service.Handler) extends Actor with ActorLogging {
