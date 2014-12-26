@@ -5,7 +5,7 @@ import sbt._
 
 object AimsBuild extends Build {
   lazy val buildSettings = Seq(
-    organization := "org.jmotor",
+    organization := "org.jmotor.aims",
     version := "1.0-SNAPSHOT",
     scalaVersion := "2.11.4"
   )
