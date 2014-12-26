@@ -1,4 +1,4 @@
-package org.jmotor.aims
+package org.jmotor.samples.services
 
 import java.util.UUID
 
