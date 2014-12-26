@@ -10,10 +10,16 @@ object AimsBuild extends Build {
     scalaVersion := "2.11.4"
   )
 
-  lazy val root = (project in file(".") settings(publish := {}, publishLocal := {})).aggregate(core)
+  lazy val root = (project in file(".") settings(publish := {}, publishLocal := {})).aggregate(core, slick)
 
   lazy val core = Project(
     id = "aims-core",
     base = file("aims-core")
+  )
+
+  lazy val slick = Project(
+    id = "aims-slick",
+    base = file("aims-slick"),
+    dependencies = Seq(core)
   )
 }
