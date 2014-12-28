@@ -16,6 +16,6 @@ object PatternParser {
         parameters.put("""\w+""".r.findFirstIn(token).get, i)
       }
     }
-    (pattern.replaceAll("""#\w+""", "\\\\d+").replaceAll(""":\w+""", "\\\\w+-?\\\\w+"), parameters.toMap)
+    (pattern.replaceAll("""#\w+""", "\\\\d+").replaceAll(""":\w+""", "(\\\\w+-?)+"), parameters.toMap)
   }
 }
