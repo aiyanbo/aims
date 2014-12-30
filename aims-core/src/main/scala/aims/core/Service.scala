@@ -44,8 +44,7 @@ trait OperationService[E] {
     Resource(pattern._1, GET, handler),
     Resource(pattern._1 + pattern._2, GET, handler),
     Resource(pattern._1 + pattern._2, PUT, handler),
-    Resource(pattern._1 + pattern._2, DELETE, handler)
-  )
+    Resource(pattern._1 + pattern._2, DELETE, handler))
 
   def handler: Service.Handler = {
     case request: ServiceRequest ⇒

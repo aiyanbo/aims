@@ -4,7 +4,7 @@ import sbt.Keys._
 import sbt._
 
 object AimsBuild extends Build {
-  lazy val buildSettings = Seq(
+  lazy val buildSettings = net.virtualvoid.sbt.graph.Plugin.graphSettings ++: Seq(
     organization := "org.jmotor.aims",
     version := "1.0-SNAPSHOT",
     scalaVersion := "2.11.4"

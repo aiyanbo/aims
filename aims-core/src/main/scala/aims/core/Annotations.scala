@@ -16,7 +16,6 @@ object Annotations {
 
   final case class mediaTypes(
     consumers: List[MediaType] = List(MediaTypes.`application/json`),
-    producers: List[MediaType] = List(MediaTypes.`application/json`)
-  ) extends StaticAnnotation
+    producers: List[MediaType] = List(MediaTypes.`application/json`)) extends StaticAnnotation
 
 }
