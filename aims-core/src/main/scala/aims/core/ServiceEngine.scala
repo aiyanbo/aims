@@ -1,9 +1,9 @@
-package org.jmotor.aims.core
+package aims.core
 
 import akka.actor.{ Actor, ActorLogging, ActorRef, Props }
 import akka.http.model.{ HttpRequest, HttpResponse, StatusCodes }
-import org.jmotor.aims.core.Resources.{ Resource, ResourceMirror }
-import org.jmotor.aims.parser.PatternParser
+import aims.core.Resources.{ Resource, ResourceMirror }
+import aims.parser.PatternParser
 
 /**
  * Component:

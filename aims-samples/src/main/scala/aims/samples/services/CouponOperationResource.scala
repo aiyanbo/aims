@@ -1,8 +1,8 @@
-package org.jmotor.samples.services
+package aims.samples.services
 
 import akka.http.model.Uri.Query
-import org.jmotor.aims.core.OperationService
-import org.jmotor.samples.dto.Coupon
+import aims.core.OperationService
+import aims.samples.dto.Coupon
 
 /**
  * Component:

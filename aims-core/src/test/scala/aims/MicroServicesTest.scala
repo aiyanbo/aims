@@ -1,4 +1,4 @@
-package org.jmotor.aims
+package aims
 
 import org.scalatest.FunSuite
 

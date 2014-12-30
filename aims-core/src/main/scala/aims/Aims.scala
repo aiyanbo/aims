@@ -1,4 +1,4 @@
-package org.jmotor.aims
+package aims
 
 import akka.actor.ActorSystem
 import akka.http.Http
@@ -6,8 +6,8 @@ import akka.http.model._
 import akka.pattern.ask
 import akka.stream.FlowMaterializer
 import akka.util.Timeout
-import org.jmotor.aims.core.Resources.Resource
-import org.jmotor.aims.core.{ OperationService, Service, ServiceEngine }
+import aims.core.Resources.Resource
+import aims.core.{ OperationService, Service, ServiceEngine }
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext.Implicits.global

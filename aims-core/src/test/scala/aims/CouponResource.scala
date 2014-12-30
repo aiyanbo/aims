@@ -1,7 +1,7 @@
-package org.jmotor.aims
+package aims
 
+import aims.core.Annotations.pattern
 import akka.http.model.HttpMethods
-import org.jmotor.aims.core.Annotations.pattern
 
 /**
  * Component:

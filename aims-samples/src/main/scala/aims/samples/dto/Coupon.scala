@@ -1,4 +1,4 @@
-package org.jmotor.samples.dto
+package aims.samples.dto
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 

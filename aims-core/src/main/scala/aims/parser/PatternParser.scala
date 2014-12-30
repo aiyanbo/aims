@@ -1,4 +1,4 @@
-package org.jmotor.aims.parser
+package aims.parser
 
 /**
  * Component:

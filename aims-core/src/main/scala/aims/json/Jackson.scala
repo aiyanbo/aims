@@ -1,4 +1,4 @@
-package org.jmotor.aims.json
+package aims.json
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.{ DeserializationFeature, ObjectMapper, PropertyNamingStrategy, SerializationFeature }

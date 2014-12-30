@@ -1,4 +1,4 @@
-package org.jmotor.aims
+package aims
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 

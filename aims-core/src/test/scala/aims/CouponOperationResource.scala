@@ -1,7 +1,7 @@
-package org.jmotor.aims
+package aims
 
+import aims.core.OperationService
 import akka.http.model.Uri.Query
-import org.jmotor.aims.core.OperationService
 
 /**
  * Component:

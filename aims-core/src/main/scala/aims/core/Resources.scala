@@ -1,4 +1,4 @@
-package org.jmotor.aims.core
+package aims.core
 
 import akka.actor.Props
 import akka.http.model.{ HttpMethod, HttpMethods, MediaType, MediaTypes }

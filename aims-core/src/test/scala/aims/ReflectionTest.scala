@@ -1,8 +1,8 @@
-package org.jmotor.aims
+package aims
 
-import akka.http.model.{ HttpMethod, HttpMethods }
-import org.jmotor.aims.core.Annotations.pattern
-import org.jmotor.aims.core.Resources.ResourceMirror
+import aims.core.Annotations.pattern
+import aims.core.Resources.ResourceMirror
+import akka.http.model.{HttpMethod, HttpMethods}
 import org.scalatest.FunSuite
 
 import scala.reflect.runtime.universe._

@@ -1,4 +1,4 @@
-package org.jmotor.aims.core
+package aims.core
 
 import akka.actor.{ Actor, ActorLogging, Props }
 import akka.http.model.HttpMethods._
@@ -7,8 +7,8 @@ import akka.http.model.StatusCodes._
 import akka.http.model.Uri.Query
 import akka.http.model._
 import akka.http.model.japi.HttpEntityStrict
-import org.jmotor.aims.core.Resources.Resource
-import org.jmotor.aims.json.Jackson
+import aims.core.Resources.Resource
+import aims.json.Jackson
 
 import scala.runtime.BoxedUnit
 

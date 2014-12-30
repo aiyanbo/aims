@@ -1,9 +1,9 @@
-package org.jmotor.samples.services
+package aims.samples.services
 
 import java.util.UUID
 
-import org.jmotor.aims.core.Service
-import org.jmotor.aims.core.Service.Handler
+import aims.core.Service
+import aims.core.Service.Handler
 
 /**
  * Component:

@@ -1,4 +1,4 @@
-package org.jmotor.aims.core
+package aims.core
 
 import akka.actor.ActorRef
 import akka.http.model.HttpRequest
