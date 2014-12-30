@@ -1,6 +1,6 @@
 package aims
 
-import aims.core.OperationService
+import aims.core.{OperationService, Page, Pagination}
 import akka.http.model.Uri.Query
 
 /**
@@ -32,7 +32,7 @@ class CouponOperationResource extends OperationService[Coupon] {
 
   }
 
-  override def list(pathParameters: Map[String, String], query: Query): List[Coupon] = {
-    List()
+  override def pagination(pathParameters: Map[String, String], page: Page, query: Query): Pagination[Coupon] = {
+    Pagination[Coupon](List(Coupon(1, "ff", Some(0))), 1, 1000)
   }
 }

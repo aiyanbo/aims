@@ -1,6 +1,6 @@
 package aims.slick
 
-import aims.core.OperationService
+import aims.core.{ OperationService, Page, Pagination }
 import akka.http.model.Uri.Query
 
 import scala.slick.jdbc.JdbcBackend.{ DatabaseDef, SessionDef }
@@ -45,10 +45,10 @@ trait SlickOperationService[E] extends OperationService[E] {
     }
   }
 
-  override def list(pathParameters: Map[String, String], query: Query): List[E] = {
+  override def pagination(pathParameters: Map[String, String], page: Page, query: Query): Pagination[E] = {
     databaseDef withSession {
       implicit session ⇒
-        listWithSession(pathParameters, query)
+        paginationWithSession(pathParameters, page, query)
     }
   }
 
@@ -60,6 +60,6 @@ trait SlickOperationService[E] extends OperationService[E] {
 
   def deleteWithSession(pathParameters: Map[String, String])(implicit session: SessionDef): Unit
 
-  def listWithSession(pathParameters: Map[String, String], query: Query)(implicit session: SessionDef): List[E]
+  def paginationWithSession(pathParameters: Map[String, String], page: Page, query: Query)(implicit session: SessionDef): Pagination[E]
 
 }
