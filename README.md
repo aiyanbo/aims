@@ -8,5 +8,6 @@ Microservices Framework Based on Akka HTTP
 
 - Cluster: register service to microservices management.
 - Support protobuf. `Content-Type: application/x-protobuf`.
+- Support E-Tag
 - Metrics
 - Logging
