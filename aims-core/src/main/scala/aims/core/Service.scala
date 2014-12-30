@@ -105,10 +105,10 @@ class MicroService(handler: Service.Handler) extends Actor with ActorLogging {
       case LinkParams.first ⇒ pagination.page > 1
       case LinkParams.last  ⇒ pagination.page < pagination.total
     }.map {
-      case LinkParams.next  ⇒ LinkValue(request.uri.withQuery(("page", (pagination.page + 1).toString)), LinkParams.next)
-      case LinkParams.prev  ⇒ LinkValue(request.uri.withQuery(("page", (pagination.page - 1).toString)), LinkParams.prev)
-      case LinkParams.first ⇒ LinkValue(request.uri.withQuery(("page", 1.toString)), LinkParams.first)
-      case LinkParams.last  ⇒ LinkValue(request.uri.withQuery(("page", pagination.total.toString)), LinkParams.last)
+      case LinkParams.next  ⇒ LinkValue(request.uri.withQuery(request.uri.query.toMap + ("page" -> (pagination.page + 1).toString)), LinkParams.next)
+      case LinkParams.prev  ⇒ LinkValue(request.uri.withQuery(request.uri.query.toMap + ("page" -> (pagination.page - 1).toString)), LinkParams.prev)
+      case LinkParams.first ⇒ LinkValue(request.uri.withQuery(request.uri.query.toMap + ("page" -> 1.toString)), LinkParams.first)
+      case LinkParams.last  ⇒ LinkValue(request.uri.withQuery(request.uri.query.toMap + ("page" -> pagination.total.toString)), LinkParams.last)
     } match {
       case Nil   ⇒ HttpResponse(status = OK, entity = HttpEntity(`application/json`.withParams(Map("charset" -> "UTF-8")), Jackson.mapper.writeValueAsString(pagination.items)))
       case links ⇒ HttpResponse(status = OK, headers = immutable.Seq(Link(links: _*)), entity = HttpEntity(`application/json`.withParams(Map("charset" -> "UTF-8")), Jackson.mapper.writeValueAsString(pagination.items)))
