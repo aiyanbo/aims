@@ -1,13 +1,14 @@
 package aims
 
+import aims.core.Resources.Resource
+import aims.core.{ OperationService, Service, ServiceEngine }
 import akka.actor.ActorSystem
 import akka.http.Http
 import akka.http.model._
 import akka.pattern.ask
 import akka.stream.FlowMaterializer
 import akka.util.Timeout
-import aims.core.Resources.Resource
-import aims.core.{ OperationService, Service, ServiceEngine }
+import com.typesafe.scalalogging.StrictLogging
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -20,7 +21,7 @@ import scala.concurrent.duration._
  * Date: 2014/12/17
  * @author Andy Ai
  */
-private[aims] class Aims(name: String) {
+private[aims] class Aims(name: String) extends StrictLogging {
   implicit val system = ActorSystem(name)
   implicit val materializer = FlowMaterializer()
   implicit val timeout: Timeout = 5000.millis
@@ -39,7 +40,7 @@ private[aims] class Aims(name: String) {
 
     val serverBinding = Http(system).bind(interface = "localhost", port = 8080)
     for (connection ← serverBinding.connections) {
-      println("Accepted new connection from " + connection.remoteAddress)
+      logger.debug(s"Accepted new connection from ${connection.remoteAddress}")
       connection handleWithAsyncHandler requestHandler
     }
   }

@@ -1,9 +1,10 @@
 package aims.core
 
-import akka.actor.{ Actor, ActorLogging, ActorRef, Props }
-import akka.http.model.{ HttpRequest, HttpResponse, StatusCodes }
 import aims.core.Resources.{ Resource, ResourceMirror }
 import aims.parser.PatternParser
+import akka.actor.{ Actor, ActorLogging, ActorRef, Props }
+import akka.http.model.{ HttpRequest, HttpResponse, StatusCodes }
+import com.typesafe.scalalogging.StrictLogging
 
 /**
  * Component:
@@ -11,12 +12,13 @@ import aims.parser.PatternParser
  * Date: 2014/12/17
  * @author Andy Ai
  */
-class ServiceEngine(resources: List[Resource]) extends Actor with ActorLogging {
+class ServiceEngine(resources: List[Resource]) extends Actor with ActorLogging with StrictLogging {
   private val actors = scala.collection.mutable.HashMap[String, ActorRef]()
   private val mirrors: Map[String, ResourceMirror] =
     resources.map(resource ⇒ {
       val res = PatternParser.parse(resource.pattern)
       val matcher = resource.method.name + "::" + res._1
+      logger.debug(s"Loading resource: ${resource.method.name} -> ${resource.pattern}")
       (matcher, ResourceMirror(resource.pattern, matcher, resource.method, MicroService.props(resource.handler), res._2,
         resource.consumerTypes, resource.producerTypes))
     }).toMap
