@@ -41,6 +41,7 @@ trait SlickOperationService[E] extends OperationService[E] {
   override def delete(pathParameters: Map[String, String]): Unit = {
     databaseDef withSession {
       implicit session ⇒
+        deleteWithSession(pathParameters)
     }
   }
 
