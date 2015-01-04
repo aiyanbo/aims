@@ -8,6 +8,7 @@ import akka.http.model._
 import akka.pattern.ask
 import akka.stream.FlowMaterializer
 import akka.util.Timeout
+import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.StrictLogging
 
 import scala.collection.mutable.ListBuffer
@@ -38,7 +39,8 @@ private[aims] class Aims(name: String) extends StrictLogging {
       case _                    ⇒ Future(HttpResponse(StatusCodes.NotFound, entity = "Unknown resource!"))
     }
 
-    val serverBinding = Http(system).bind(interface = "localhost", port = 8080)
+    val config = ConfigFactory.load("application.conf")
+    val serverBinding = Http(system).bind(interface = config.getString("aims.host"), port = config.getInt("aims.port"))
     for (connection ← serverBinding.connections) {
       logger.debug(s"Accepted new connection from ${connection.remoteAddress}")
       connection handleWithAsyncHandler requestHandler
