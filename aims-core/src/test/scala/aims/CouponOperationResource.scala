@@ -33,6 +33,6 @@ class CouponOperationResource extends OperationService[Coupon] {
   }
 
   override def pagination(pathParameters: Map[String, String], page: Page, query: Query): Pagination[Coupon] = {
-    Pagination[Coupon](List(Coupon(1, "ff", Some(0))), 1, 1000)
+    Pagination[Coupon](List(Coupon(1, "ff", Some(0))), 1, 1000, 1000)
   }
 }

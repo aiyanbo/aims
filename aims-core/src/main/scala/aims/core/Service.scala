@@ -1,6 +1,7 @@
 package aims.core
 
 import aims.core.Resources.Resource
+import aims.core.model.headers.XTotalCount
 import aims.json.Jackson
 import akka.actor.{ Actor, ActorLogging, Props }
 import akka.http.model.HttpMethods._
@@ -100,18 +101,18 @@ class MicroService(handler: Service.Handler) extends Actor with ActorLogging {
       return HttpResponse(OK, entity = HttpEntity(`application/json`.withParams(Map("charset" -> "UTF-8")), "[]"))
     }
     pagination.links.filter {
-      case LinkParams.next  ⇒ pagination.page < pagination.total
+      case LinkParams.next  ⇒ pagination.page < pagination.totalPage
       case LinkParams.prev  ⇒ pagination.page - 1 > 1
       case LinkParams.first ⇒ pagination.page > 1
-      case LinkParams.last  ⇒ pagination.page < pagination.total
+      case LinkParams.last  ⇒ pagination.page < pagination.totalPage
     }.map {
       case LinkParams.next  ⇒ LinkValue(request.uri.withQuery(request.uri.query.toMap + ("page" -> (pagination.page + 1).toString)), LinkParams.next)
       case LinkParams.prev  ⇒ LinkValue(request.uri.withQuery(request.uri.query.toMap + ("page" -> (pagination.page - 1).toString)), LinkParams.prev)
       case LinkParams.first ⇒ LinkValue(request.uri.withQuery(request.uri.query.toMap + ("page" -> 1.toString)), LinkParams.first)
-      case LinkParams.last  ⇒ LinkValue(request.uri.withQuery(request.uri.query.toMap + ("page" -> pagination.total.toString)), LinkParams.last)
+      case LinkParams.last  ⇒ LinkValue(request.uri.withQuery(request.uri.query.toMap + ("page" -> pagination.totalPage.toString)), LinkParams.last)
     } match {
-      case Nil   ⇒ HttpResponse(status = OK, entity = HttpEntity(`application/json`.withParams(Map("charset" -> "UTF-8")), Jackson.mapper.writeValueAsString(pagination.items)))
-      case links ⇒ HttpResponse(status = OK, headers = immutable.Seq(Link(links: _*)), entity = HttpEntity(`application/json`.withParams(Map("charset" -> "UTF-8")), Jackson.mapper.writeValueAsString(pagination.items)))
+      case Nil   ⇒ HttpResponse(status = OK, headers = immutable.Seq(XTotalCount(pagination.totalCount)), entity = HttpEntity(`application/json`.withParams(Map("charset" -> "UTF-8")), Jackson.mapper.writeValueAsString(pagination.items)))
+      case links ⇒ HttpResponse(status = OK, headers = immutable.Seq(Link(links: _*), XTotalCount(pagination.totalCount)), entity = HttpEntity(`application/json`.withParams(Map("charset" -> "UTF-8")), Jackson.mapper.writeValueAsString(pagination.items)))
     }
 
   }
