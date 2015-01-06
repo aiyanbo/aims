@@ -1,7 +1,7 @@
 package aims
 
 import aims.core.Resources.Resource
-import aims.core.{ OperationService, Service, ServiceEngine }
+import aims.core.{OperationService, Service, ServiceEngine}
 import akka.actor.ActorSystem
 import akka.http.Http
 import akka.http.model._
@@ -36,7 +36,6 @@ private[aims] class Aims(name: String) extends StrictLogging {
       case HttpRequest(HttpMethods.GET, Uri.Path("/favicon.ico"), _, _, _) ⇒
         Future(HttpResponse(status = StatusCodes.OK))
       case request: HttpRequest ⇒ (serverEngine ? request).map(_.asInstanceOf[HttpResponse])
-      case _                    ⇒ Future(HttpResponse(StatusCodes.NotFound, entity = "Unknown resource!"))
     }
 
     val config = ConfigFactory.load("application.conf")
