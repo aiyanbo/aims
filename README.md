@@ -11,3 +11,7 @@ Microservices Framework Based on Akka HTTP
 - Support E-Tag
 - Metrics
 - Logging
+
+#Google Groups
+
+https://groups.google.com/d/forum/aims-framework
