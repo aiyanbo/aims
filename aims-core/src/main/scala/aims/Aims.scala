@@ -1,7 +1,7 @@
 package aims
 
 import aims.core.Resources.Resource
-import aims.core.{OperationService, Service, ServiceEngine}
+import aims.core.{ OperationService, Service, ServiceEngine }
 import akka.actor.ActorSystem
 import akka.http.Http
 import akka.http.model._

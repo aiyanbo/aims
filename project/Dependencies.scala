@@ -25,14 +25,15 @@ object Dependencies {
     val log4j2Core = "org.apache.logging.log4j" % "log4j-core" % Versions.log4j2
     val log4j2Slf4j = "org.apache.logging.log4j" % "log4j-slf4j-impl" % Versions.log4j2
     val akkaStream = "com.typesafe.akka" %% "akka-stream-experimental" % Versions.akkaHttp
-    val akkaHttp = "com.typesafe.akka" %% "akka-http-core-experimental" % Versions.akkaHttp
+    val akkaHttp = "com.typesafe.akka" %% "akka-http-experimental" % Versions.akkaHttp
+    val akkaHttpCore = "com.typesafe.akka" %% "akka-http-core-experimental" % Versions.akkaHttp
     val jackson = "com.fasterxml.jackson.module" %% "jackson-module-scala" % Versions.jackson
     val scalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % Versions.scalaLogging
   }
 
   import aims.Dependencies.Compile._
 
-  val core = Seq(log4j2Api, log4j2Core, log4j2Slf4j, scalaLogging, akka, akkaStream, akkaHttp, jackson, Test.scalaTest)
+  val core = Seq(log4j2Api, log4j2Core, log4j2Slf4j, scalaLogging, akka, akkaStream, akkaHttp, akkaHttpCore, jackson, Test.scalaTest)
 
   val slick = Seq(Compile.slick, Test.scalaTest)
 
