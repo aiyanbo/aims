@@ -1,18 +1,17 @@
 package akka
 
+import aims.routing.Paths._
+import aims.util.Lists
 import akka.http.model.Uri
 import akka.http.model.Uri.Path
-import akka.http.server.util.Tuple
-import akka.http.server.util.TupleOps.Join
-import akka.http.server.{PathMatchers, PathMatcher}
-import akka.http.server.PathMatcher.{Matched, _}
+import akka.http.server.PathMatcher
+import akka.http.server.PathMatcher.{ Matched, _ }
 import org.scalatest.FunSuite
-import aims.routing.Paths._
 
 import scala.collection.mutable.ListBuffer
 
 /**
- * Component: 
+ * Component:
  * Description:
  * Date: 15/1/13
  * @author Andy Ai
@@ -31,27 +30,31 @@ class HttpTest extends FunSuite {
   }
 
   test("Path context 1") {
-    val pattern = "systems/:systemId/applications/#applicationId"
-    val matcher = PatternMatcher(pattern)
-    matcher.apply(Path("systems/1234/applications/4321")) match {
-      case Some(extractions) => println(extractions)
-      case None => println("unmatched")
+    mp {
+      val pattern = "systems/:systemId/applications/#applicationId"
+      val matcher = PatternMatcher(pattern)
+      matcher.apply(Path("systems/system-2/applications/521"))
     }
   }
 
   test("Path context 2") {
-    val pattern = "systems/:systemId/applications/#applicationId"
-    val matcher = PatternMatcher("systems" / Segment / "applications" / LongNumber)
-    matcher.apply(Path("systems/1234/applications/4321")) match {
-      case Some(extractions) =>  println(extractions.getClass)
-      case None => println("unmatched")
+    mp {
+      val matcher = PatternMatcher("systems" / Segment / "applications" / LongNumber)
+      matcher.apply(Path("systems/system-1/applications/520"))
     }
   }
 
-  def m(m: => {}) = {
+  def m(m: ⇒ {}) = {
     m match {
-      case Matched(_, exts) => println(exts)
-      case _ => println("unmatched")
+      case Matched(_, exts) ⇒ println(exts.getClass)
+      case _                ⇒ println("unmatched")
+    }
+  }
+
+  def mp(m: ⇒ {}) = {
+    m match {
+      case Some(s) ⇒ println(s)
+      case None    ⇒ println("unmatched")
     }
   }
 }
@@ -63,8 +66,8 @@ trait PatternMatcher {
 class AkkaPathMatcher(pm: PathMatcher[_]) extends PatternMatcher {
   override def apply(path: Path): Option[Any] = {
     pm.apply(path) match {
-      case Matched(_, extractions) => Some(extractions)
-      case Unmatched => None
+      case Matched(_, extractions) ⇒ Some(extractions)
+      case Unmatched               ⇒ None
     }
   }
 }
@@ -75,13 +78,18 @@ class AimsPathMatcher(pm: String) extends PatternMatcher {
     val parameters = ListBuffer[Int]()
     for (i ← 0 to (tokens.length - 1)) {
       val token = tokens(i)
-      if (token.matches( """(:|#)\w+""")) {
+      if (token.matches("""(:|#)\w+""")) {
         parameters += i
       }
     }
-    val matcher = pm.replaceAll( """#\w+""", "\\\\d+").replaceAll( """:\w+""", "(\\\\w+-?)+")
+    val matcher = pm.replaceAll("""#\w+""", "\\\\d+").replaceAll(""":\w+""", "(\\\\w+-?)+")
     if (path.toString().matches(matcher)) {
-      Some(parameters.map(path.toString().split("/")(_)))
+      if (parameters.isEmpty) {
+        Some(())
+      } else {
+        val segments = path.toString().split("/")
+        Some(Lists.toTuple(parameters.map(segments(_)).toList))
+      }
     } else {
       None
     }
