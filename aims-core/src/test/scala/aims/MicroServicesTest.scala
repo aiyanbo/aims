@@ -9,7 +9,7 @@ import org.scalatest.FunSuite
  * @author Andy Ai
  */
 class MicroServicesTest extends FunSuite {
-  
+
   test("Regex") {
     val pattern = "GET::/systems/#systemId/applications/:applicationId/star"
 
@@ -17,11 +17,11 @@ class MicroServicesTest extends FunSuite {
     val m = scala.collection.mutable.HashMap[String, Int]()
     for (i ← 0 to (tokens.length - 1)) {
       val token = tokens(i)
-      if (token.matches( """(:|#)\w+""")) {
-        m.put( """\w+""".r.findFirstIn(token).get, i)
+      if (token.matches("""(:|#)\w+""")) {
+        m.put("""\w+""".r.findFirstIn(token).get, i)
       }
     }
-    val p = pattern.replaceAll( """#\w+""", "\\\\d+").replaceAll( """:\w+""", "\\\\w+-?\\\\w+")
+    val p = pattern.replaceAll("""#\w+""", "\\\\d+").replaceAll(""":\w+""", "\\\\w+-?\\\\w+")
 
     val path = "GET::/systems/12345/applications/ws-456s/star"
 

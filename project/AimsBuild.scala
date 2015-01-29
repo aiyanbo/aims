@@ -1,5 +1,6 @@
 package aims
 
+import aims.Dependencies.Versions
 import sbt.Keys._
 import sbt._
 
@@ -7,7 +8,7 @@ object AimsBuild extends Build {
   lazy val buildSettings = net.virtualvoid.sbt.graph.Plugin.graphSettings ++: Seq(
     organization := "org.jmotor.aims",
     version := "1.0-SNAPSHOT",
-    scalaVersion := "2.11.4"
+    scalaVersion := Versions.scala
   )
 
   lazy val root = (project in file(".") settings(publish := {}, publishLocal := {})).aggregate(core, slick)

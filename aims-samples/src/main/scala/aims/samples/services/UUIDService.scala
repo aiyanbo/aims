@@ -2,9 +2,6 @@ package aims.samples.services
 
 import java.util.UUID
 
-import aims.core.Service
-import aims.core.Service.Handler
-
 /**
  * Component:
  * Description:

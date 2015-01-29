@@ -2,7 +2,7 @@ package aims
 
 import aims.core.Annotations.pattern
 import aims.core.Resources.ResourceMirror
-import akka.http.model.{HttpMethod, HttpMethods}
+import akka.http.model.{ HttpMethod, HttpMethods }
 import org.scalatest.FunSuite
 
 import scala.reflect.runtime.universe._

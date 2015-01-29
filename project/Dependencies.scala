@@ -8,6 +8,7 @@ object Dependencies {
     val akka = "2.3.7"
     val log4j2 = "2.1"
     val slick = "2.1.0"
+    val scala = "2.11.5"
     val jackson = "2.4.4"
     val akkaHttp = "1.0-M2"
     val scalaTest = "2.2.2"

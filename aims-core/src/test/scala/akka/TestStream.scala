@@ -1,9 +1,8 @@
 package akka
 
 import akka.actor.ActorSystem
-import akka.actor.Status.Success
 import akka.http.Http
-import akka.http.model.{HttpResponse, HttpRequest, StatusCodes}
+import akka.http.model.{ HttpRequest, HttpResponse, StatusCodes }
 import akka.stream.FlowMaterializer
 import akka.stream.scaladsl.Flow
 
@@ -20,12 +19,13 @@ object TestStream extends App {
 
   val binding = Http().bind(interface = "localhost", port = 8080)
 
-  val flow = Flow[HttpRequest].via(Flow[HttpRequest].mapAsync(req => Future {
+  val flow = Flow[HttpRequest].via(Flow[HttpRequest].mapAsync(req ⇒ Future {
     StatusCodes.NotFound
   })).mapAsync {
-    status => Future {
-      HttpResponse(entity = status.intValue.toString)
-    }
+    status ⇒
+      Future {
+        HttpResponse(entity = status.intValue.toString)
+      }
   }
 
   val materializedMap = binding startHandlingWith flow

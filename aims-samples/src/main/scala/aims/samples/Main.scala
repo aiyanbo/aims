@@ -1,8 +1,5 @@
 package aims.samples
 
-import  aims.Aims
-import aims.samples.services.{CouponOperationResource, UUIDService}
-
 /**
  * Component:
  * Description:

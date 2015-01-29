@@ -1,7 +1,5 @@
 package aims.samples.dto
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-
 /**
  * Component:
  * Description:

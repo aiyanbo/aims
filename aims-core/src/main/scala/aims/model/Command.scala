@@ -14,6 +14,8 @@ object Command {
 
   final case class UPDATE() extends Command
 
+  final case class MODIFY() extends Command
+
   final case class DELETE() extends Command
 
 }

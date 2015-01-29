@@ -1,30 +1,45 @@
 package aims.routing
 
-import akka.actor.{ Props, ActorLogging, Actor }
-import akka.http.model.{ HttpResponse, HttpRequest }
-
-import akka.http.server.PathMatcher
-import akka.http.server.PathMatcher.{ Unmatched, Matched }
+import aims.core.{ RestRes, RestResActor }
+import aims.model.{ Event, RequestContext }
+import akka.actor.{ Actor, ActorLogging, Props }
+import akka.http.model.{ HttpResponse, StatusCodes }
+import akka.http.server._
 
 /**
- * Component:
+ * Component: INTERNAL API
  * Description:
  * Date: 15/1/20
  * @author Andy Ai
  */
-class RouteActor(paths: List[PathMatcher[_]]) extends Actor with ActorLogging {
+private[aims] class RouteActor(res: List[RestRes]) extends Actor with ActorLogging with Directives {
 
   override def receive: Receive = {
-    case request: HttpRequest ⇒
-      paths(0).apply(request.uri.path) match {
-        case Matched(_, extractions) ⇒ println(extractions)
-        case Unmatched               ⇒ println("nothing")
+    case ctx: RequestContext ⇒
+      val request = ctx.request
+      val (path, method) = (request.uri.path, request.method)
+      res map { r ⇒
+        (r.pattern().apply(path), r)
+      } filter {
+        r ⇒
+          r._1 match {
+            case Some(_) ⇒ true
+            case None    ⇒ false
+          }
+      } match {
+        case Nil ⇒ sender() ! HttpResponse(StatusCodes.NotFound)
+        case rs ⇒
+          rs.find(r ⇒ r._2.method() == method) match {
+            case None    ⇒ sender() ! HttpResponse(StatusCodes.MethodNotAllowed)
+            case Some(r) ⇒ context.actorOf(RestResActor.props(r._2)) ! Event(sender(), r._1, ctx.payload, request)
+          }
       }
   }
+
 }
 
 object RouteActor {
-  def props(paths: List[PathMatcher[_]]): Props = {
-    Props(new RouteActor(paths))
+  def props(res: List[RestRes]): Props = {
+    Props(new RouteActor(res))
   }
 }

@@ -1,6 +1,6 @@
 package aims
 
-import aims.core.{OperationService, Page, Pagination}
+import aims.core.{ OperationService, Page, Pagination }
 import akka.http.model.Uri.Query
 
 /**

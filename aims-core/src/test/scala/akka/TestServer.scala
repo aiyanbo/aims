@@ -3,9 +3,9 @@ package akka
 import akka.actor.ActorSystem
 import akka.http.Http
 import akka.http.model.HttpResponse
+import akka.http.server.Directives._
 import akka.http.server.RouteResult
 import akka.stream.FlowMaterializer
-import akka.http.server.Directives._
 import com.google.common.net.HttpHeaders
 
 object TestServer extends App {
