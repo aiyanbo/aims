@@ -2,9 +2,11 @@ package aims.routing
 
 import aims.core.{ RestRes, RestResActor }
 import aims.model.{ Event, RequestContext }
-import akka.actor.{ Actor, ActorLogging, Props }
+import akka.actor.{ ActorRef, Actor, ActorLogging, Props }
 import akka.http.model.{ HttpResponse, StatusCodes }
 import akka.http.server._
+
+import scala.collection.mutable
 
 /**
  * Component: INTERNAL API
@@ -13,6 +15,8 @@ import akka.http.server._
  * @author Andy Ai
  */
 private[aims] class RouteActor(res: List[RestRes]) extends Actor with ActorLogging with Directives {
+
+  private lazy val actorPool: mutable.HashMap[RestRes, ActorRef] = mutable.HashMap[RestRes, ActorRef]()
 
   override def receive: Receive = {
     case ctx: RequestContext ⇒
@@ -30,8 +34,10 @@ private[aims] class RouteActor(res: List[RestRes]) extends Actor with ActorLoggi
         case Nil ⇒ sender() ! HttpResponse(StatusCodes.NotFound)
         case rs ⇒
           rs.find(r ⇒ r._2.method() == method) match {
-            case None    ⇒ sender() ! HttpResponse(StatusCodes.MethodNotAllowed)
-            case Some(r) ⇒ context.actorOf(RestResActor.props(r._2)) ! Event(sender(), r._1, ctx.payload, request)
+            case None ⇒ sender() ! HttpResponse(StatusCodes.MethodNotAllowed)
+            case Some(r) ⇒
+              val worker = actorPool.getOrElseUpdate(r._2, context.actorOf(RestResActor.props(r._2)))
+              worker ! Event(sender(), r._1, ctx.payload, request)
           }
       }
   }
