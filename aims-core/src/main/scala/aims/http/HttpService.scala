@@ -68,5 +68,4 @@ trait HttpService extends Directives {
 
 }
 
-class HttpServiceBinding(val system: ActorSystem, val handlers: List[RestRes]) extends HttpService {
-}
+class HttpServiceBinding(val system: ActorSystem, val handlers: List[RestRes]) extends HttpService
