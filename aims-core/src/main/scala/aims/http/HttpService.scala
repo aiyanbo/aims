@@ -28,7 +28,7 @@ trait HttpService extends Directives {
   private val router = system.actorOf(RouteActor.props(handlers))
 
   def route = {
-    get {
+    (get | delete) {
       extractRequestContext {
         ctx ⇒
           complete {
@@ -38,7 +38,7 @@ trait HttpService extends Directives {
             }
           }
       }
-    } ~ post {
+    } ~ (post | patch | put) {
       //      optionalHeaderValueByName(HttpHeaders.CONTENT_LENGTH) {
       //        case Some(contentLength) if contentLength.toLong > 0 =>
       extractRequestContext {
@@ -63,12 +63,6 @@ trait HttpService extends Directives {
       //          }
       //      }
 
-    } ~ delete {
-      complete("null")
-    } ~ patch {
-      complete("null")
-    } ~ put {
-      complete("null")
     }
   }
 
