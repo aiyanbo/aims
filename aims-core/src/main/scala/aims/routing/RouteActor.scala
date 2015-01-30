@@ -37,7 +37,7 @@ private[aims] class RouteActor(res: List[RestRes]) extends Actor with ActorLoggi
             case None ⇒ sender() ! HttpResponse(StatusCodes.MethodNotAllowed)
             case Some(r) ⇒
               val worker = actorPool.getOrElseUpdate(r._2, context.actorOf(RestResActor.props(r._2)))
-              worker ! Event(sender(), r._1, ctx.payload, request)
+              worker ! Event(sender(), r._1.get, ctx.payload, request)
           }
       }
   }
