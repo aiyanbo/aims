@@ -1,6 +1,6 @@
 package aims
 
-import aims.res.{ CheckNameRes, PingRes }
+import aims.res.{ CouponRes, CheckNameRes, PingRes }
 import akka.actor.ActorSystem
 import akka.stream.FlowMaterializer
 import akka.util.Timeout
@@ -18,7 +18,7 @@ object SimpleApp extends App {
   implicit val materializer = FlowMaterializer()
   implicit val timeout: Timeout = 5000.millis
 
-  private val service = new MicroServiceSystem(List(new PingRes(), new CheckNameRes))
+  private val service = new MicroServiceSystem(List(new PingRes, new CheckNameRes, new CouponRes))
 
   service.start("localhost", port = 8080)
 }
