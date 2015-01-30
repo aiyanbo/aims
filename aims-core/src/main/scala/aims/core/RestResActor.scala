@@ -2,13 +2,12 @@ package aims.core
 
 import aims.core.model.headers.XTotalCount
 import aims.json.Jackson
-import aims.model.HandleResult.{ Failure, Complete, Rejected, Success }
+import aims.model.HandleResult.{ Complete, Failure, Rejected, Success }
 import aims.model.{ Event, HandleResult }
 import akka.actor.{ Actor, Props }
-import akka.http.model.MediaTypes._
 import akka.http.model.StatusCodes._
-import akka.http.model.headers.{ Link, LinkValue, LinkParams }
 import akka.http.model._
+import akka.http.model.headers.{ Link, LinkParams, LinkValue }
 
 import scala.collection.immutable
 import scala.runtime.BoxedUnit
@@ -51,7 +50,7 @@ class RestResActor(res: RestRes) extends Actor {
 
   private def makePagination(pagination: Pagination[_], request: HttpRequest): HttpResponse = {
     if (pagination.items.isEmpty) {
-      return HttpResponse(OK, entity = HttpEntity(ContentTypes.`application/json`, "[]"))
+      return HttpResponse(entity = HttpEntity(ContentTypes.`application/json`, "[]"))
     }
     pagination.links.filter {
       case LinkParams.next  ⇒ pagination.page < pagination.totalPage
@@ -59,10 +58,10 @@ class RestResActor(res: RestRes) extends Actor {
       case LinkParams.first ⇒ pagination.page > 1
       case LinkParams.last  ⇒ pagination.page < pagination.totalPage
     }.map {
-      case LinkParams.next  ⇒ LinkValue(request.uri.withQuery(request.uri.query.toMap + ("page" -> (pagination.page + 1).toString)), LinkParams.next)
-      case LinkParams.prev  ⇒ LinkValue(request.uri.withQuery(request.uri.query.toMap + ("page" -> (pagination.page - 1).toString)), LinkParams.prev)
-      case LinkParams.first ⇒ LinkValue(request.uri.withQuery(request.uri.query.toMap + ("page" -> 1.toString)), LinkParams.first)
-      case LinkParams.last  ⇒ LinkValue(request.uri.withQuery(request.uri.query.toMap + ("page" -> pagination.totalPage.toString)), LinkParams.last)
+      case LinkParams.next  ⇒ LinkValue(request.uri.withQuery(request.uri.query.+:("page", (pagination.page + 1).toString)), LinkParams.next)
+      case LinkParams.prev  ⇒ LinkValue(request.uri.withQuery(request.uri.query.+:("page", (pagination.page - 1).toString)), LinkParams.prev)
+      case LinkParams.first ⇒ LinkValue(request.uri.withQuery(request.uri.query.+:("page", 1.toString)), LinkParams.first)
+      case LinkParams.last  ⇒ LinkValue(request.uri.withQuery(request.uri.query.+:("page", pagination.totalPage.toString)), LinkParams.last)
     } match {
       case Nil   ⇒ HttpResponse(status = OK, headers = immutable.Seq(XTotalCount(pagination.totalCount)), entity = HttpEntity(ContentTypes.`application/json`, Jackson.mapper.writeValueAsString(pagination.items)))
       case links ⇒ HttpResponse(status = OK, headers = immutable.Seq(Link(links: _*), XTotalCount(pagination.totalCount)), entity = HttpEntity(ContentTypes.`application/json`, Jackson.mapper.writeValueAsString(pagination.items)))
