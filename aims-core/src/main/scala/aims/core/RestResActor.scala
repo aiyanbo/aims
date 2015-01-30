@@ -1,6 +1,6 @@
 package aims.core
 
-import aims.model.HandleResult.{ Complete, Rejected, Success }
+import aims.model.HandleResult.{ Failure, Complete, Rejected, Success }
 import aims.model.{ Event, HandleResult }
 import akka.actor.{ Actor, Props }
 import akka.http.model.{ HttpResponse, StatusCodes }
@@ -26,6 +26,7 @@ class RestResActor(res: RestRes) extends Actor {
         case Success(result)      ⇒ HttpResponse(entity = result.toString)
         // TODO: transform http response
         case Rejected(rejections) ⇒ rejections
+        case Failure(causes)      ⇒ HttpResponse(StatusCodes.InternalServerError)
       }
     } catch {
       case e: Throwable ⇒ HttpResponse(StatusCodes.InternalServerError)

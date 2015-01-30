@@ -8,7 +8,9 @@ import akka.http.model.{ HttpResponse, StatusCodes }
 import akka.http.server.Directives
 import akka.pattern.ask
 import akka.stream.FlowMaterializer
-
+import akka.util.Timeout
+import akka.http.model.headers._
+import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.Failure
 
@@ -23,49 +25,50 @@ trait HttpService extends Directives {
   implicit val handlers: List[RestRes]
   implicit val materializer = FlowMaterializer()
 
+  val timeout: Timeout
+  val forcedContentLengthHeader: Boolean
+
   import system.dispatcher
 
   private val router = system.actorOf(RouteActor.props(handlers))
 
-  def route = {
+  def route() = {
     (get | delete) {
-      extractRequestContext {
-        ctx ⇒
-          complete {
-            router.ask(RequestContext(ctx.request, None))(10.seconds).collect {
-              case response: HttpResponse ⇒ response
-              case Failure(exception)     ⇒ HttpResponse(StatusCodes.InternalServerError)
-            }
-          }
+      extractRequestContext { ctx ⇒
+        complete(dispatchRequest(ctx, None))
       }
     } ~ (post | patch | put) {
-      //      optionalHeaderValueByName(HttpHeaders.CONTENT_LENGTH) {
-      //        case Some(contentLength) if contentLength.toLong > 0 =>
-      extractRequestContext {
-        ctx ⇒
-          entity(as[Option[String]]) { payload ⇒
-            complete {
-              router.ask(RequestContext(ctx.request, payload))(10.seconds).collect {
-                case response: HttpResponse ⇒ response
-                case Failure(exception)     ⇒ HttpResponse(StatusCodes.InternalServerError)
+      extractRequestContext { ctx ⇒
+        if (forcedContentLengthHeader) {
+          optionalHeaderValueByName(`Content-Length`.name) {
+            case Some(contentLength) if contentLength.toLong > 0 ⇒
+              entity(as[Option[String]]) { payload ⇒
+                complete(dispatchRequest(ctx, payload))
               }
-            }
+            case _ ⇒
+              complete(dispatchRequest(ctx, None))
           }
+        } else {
+          entity(as[Option[String]]) { payload ⇒
+            complete(dispatchRequest(ctx, payload))
+          }
+        }
       }
-      //        case _ =>
-      //          extractRequestContext {
-      //            ctx ⇒
-      //              Await.result(router.ask(ctx.request)(10.seconds).collect {
-      //                case response: HttpResponse ⇒ complete(response)
-      //                case Rejected(rejections) => reject(rejections: _*)
-      //                case Failure(exception) ⇒ complete(HttpResponse(StatusCodes.InternalServerError))
-      //              }, 10.seconds)
-      //          }
-      //      }
 
+    }
+  }
+
+  private def dispatchRequest(ctx: akka.http.server.RequestContext, payload: Option[String]): Future[HttpResponse] = {
+    router.ask(RequestContext(ctx.request, payload))(timeout).collect {
+      case response: HttpResponse ⇒ response
+      case Failure(exception)     ⇒ HttpResponse(StatusCodes.InternalServerError)
     }
   }
 
 }
 
-class HttpServiceBinding(val system: ActorSystem, val handlers: List[RestRes]) extends HttpService
+class HttpServiceBinding(
+  val system: ActorSystem,
+  val handlers: List[RestRes],
+  val timeout: Timeout = 5.seconds,
+  val forcedContentLengthHeader: Boolean = false) extends HttpService
