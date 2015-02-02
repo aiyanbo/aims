@@ -1,6 +1,6 @@
 package aims.slick
 
-import aims.core.{ OperationService, Page, Pagination }
+import aims.core.{ Page, Pagination }
 import akka.http.model.Uri.Query
 
 import scala.slick.jdbc.JdbcBackend.{ DatabaseDef, SessionDef }
@@ -11,41 +11,41 @@ import scala.slick.jdbc.JdbcBackend.{ DatabaseDef, SessionDef }
  * Date: 14/12/26
  * @author Andy Ai
  */
-trait SlickOperationService[E] extends OperationService[E] {
+trait SlickOperationService[E] {
 
   def database(): DatabaseDef
 
   val databaseDef = database()
 
-  override def update(pathParameters: Map[String, String], entity: E): Unit = {
+  def update(pathParameters: Map[String, String], entity: E): Unit = {
     databaseDef withSession {
       implicit session ⇒
         updateWithSession(pathParameters, entity)
     }
   }
 
-  override def insert(pathParameters: Map[String, String], entity: E): Option[E] = {
+  def insert(pathParameters: Map[String, String], entity: E): Option[E] = {
     databaseDef withSession {
       implicit session ⇒
         insertWithSession(pathParameters, entity)
     }
   }
 
-  override def get(pathParameters: Map[String, String], query: Query): Option[E] = {
+  def get(pathParameters: Map[String, String], query: Query): Option[E] = {
     databaseDef withSession {
       implicit session ⇒
         getWithSession(pathParameters, query)
     }
   }
 
-  override def delete(pathParameters: Map[String, String]): Unit = {
+  def delete(pathParameters: Map[String, String]): Unit = {
     databaseDef withSession {
       implicit session ⇒
         deleteWithSession(pathParameters)
     }
   }
 
-  override def pagination(pathParameters: Map[String, String], page: Page, query: Query): Pagination[E] = {
+  def pagination(pathParameters: Map[String, String], page: Page, query: Query): Pagination[E] = {
     databaseDef withSession {
       implicit session ⇒
         paginationWithSession(pathParameters, page, query)
