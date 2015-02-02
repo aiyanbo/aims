@@ -2,7 +2,8 @@ package aims
 
 import aims.core.RestRes
 import aims.http.HttpServiceBinding
-import akka.actor.ActorSystem
+import aims.marshalling.MarshallingActor
+import akka.actor.{ ActorSystem, Props }
 import akka.http.Http
 import akka.http.engine.server.ServerSettings
 import akka.io.Inet
@@ -30,12 +31,13 @@ class MicroServiceSystem(resources: List[RestRes]) extends StrictLogging {
     //        Future(HttpResponse(status = StatusCodes.OK))
     //      case request: HttpRequest ⇒ (router ? request).map(_.asInstanceOf[HttpResponse])
     //    }
+    val m = system.actorOf(Props[MarshallingActor], MarshallingActor.name)
 
     implicit val flow = FlowMaterializer()
     val serverBinding = Http(system).bind(interface, port, backlog, options, settings)
 
     serverBinding startHandlingWith {
-      new HttpServiceBinding(system, resources).route
+      new HttpServiceBinding(system, flow, resources).route
     }
     //    serverBinding.connections.foreach { connection ⇒
     //      logger.debug("Accepted new connection from " + connection.remoteAddress)

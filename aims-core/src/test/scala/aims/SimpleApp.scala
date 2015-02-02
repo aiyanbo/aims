@@ -1,6 +1,6 @@
 package aims
 
-import aims.res.{ CouponRes, CheckNameRes, PingRes }
+import aims.res.{ CheckNameRes, CouponRes, PingRes }
 import akka.actor.ActorSystem
 import akka.stream.FlowMaterializer
 import akka.util.Timeout

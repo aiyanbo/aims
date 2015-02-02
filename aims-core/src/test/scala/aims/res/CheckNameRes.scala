@@ -2,10 +2,10 @@ package aims.res
 
 import aims.core.RestRes
 import aims.model.Event
+import aims.model.HandleResult._
 import aims.routing.PatternMatcher
 import aims.routing.Patterns._
-import akka.http.model.{ StatusCodes, HttpResponse, HttpMethods, HttpMethod }
-import aims.model.HandleResult._
+import akka.http.model.{ HttpMethod, HttpMethods, HttpResponse, StatusCodes }
 
 /**
  * Component:

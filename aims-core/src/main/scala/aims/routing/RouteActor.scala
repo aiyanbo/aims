@@ -2,7 +2,7 @@ package aims.routing
 
 import aims.core.{ RestRes, RestResActor }
 import aims.model.{ Event, RequestContext }
-import akka.actor.{ ActorRef, Actor, ActorLogging, Props }
+import akka.actor.{ Actor, ActorLogging, ActorRef, Props }
 import akka.http.model.{ HttpResponse, StatusCodes }
 import akka.http.server._
 
