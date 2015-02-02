@@ -13,7 +13,8 @@ import akka.http.model._
  * @author Andy Ai
  */
 class RestResActor(res: RestRes) extends Actor {
-  private val marshaller: ActorSelection = context.actorSelection("/user/" + MarshallingActor.name)
+  // have a better way?
+  private lazy val marshaller: ActorSelection = context.actorSelection("/user/" + MarshallingActor.name)
 
   override def receive: Receive = {
     case event: Event ⇒

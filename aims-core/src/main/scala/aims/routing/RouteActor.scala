@@ -1,9 +1,11 @@
 package aims.routing
 
 import aims.core.{ RestRes, RestResActor }
-import aims.model.{ Event, RequestContext }
-import akka.actor.{ Actor, ActorLogging, ActorRef, Props }
-import akka.http.model.{ HttpResponse, StatusCodes }
+import aims.marshalling.MarshallingActor
+import aims.model.{ Event, Marshalling, RequestContext }
+import akka.actor._
+import akka.http.model.HttpResponse
+import akka.http.model.StatusCodes._
 import akka.http.server._
 
 import scala.collection.mutable
@@ -15,6 +17,8 @@ import scala.collection.mutable
  * @author Andy Ai
  */
 private[aims] class RouteActor(res: List[RestRes]) extends Actor with ActorLogging with Directives {
+
+  private lazy val marshaller: ActorSelection = context.actorSelection("/user/" + MarshallingActor.name)
 
   private lazy val actorPool: mutable.HashMap[RestRes, ActorRef] = mutable.HashMap[RestRes, ActorRef]()
 
@@ -31,10 +35,10 @@ private[aims] class RouteActor(res: List[RestRes]) extends Actor with ActorLoggi
             case None    ⇒ false
           }
       } match {
-        case Nil ⇒ sender() ! HttpResponse(StatusCodes.NotFound)
+        case Nil ⇒ marshaller ! Marshalling(HttpResponse(NotFound), request, sender())
         case rs ⇒
           rs.find(r ⇒ r._2.method() == method) match {
-            case None ⇒ sender() ! HttpResponse(StatusCodes.MethodNotAllowed)
+            case None ⇒ marshaller ! Marshalling(HttpResponse(MethodNotAllowed), request, sender())
             case Some(r) ⇒
               val worker = actorPool.getOrElseUpdate(r._2, context.actorOf(RestResActor.props(r._2)))
               worker ! Event(sender(), r._1.get, ctx.payload, request)
