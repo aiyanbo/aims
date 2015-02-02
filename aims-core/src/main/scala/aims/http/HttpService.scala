@@ -32,7 +32,7 @@ trait HttpService extends Directives {
 
   private val router = system.actorOf(RouteActor.props(handlers))
 
-  def route() = {
+  def route = {
     (get | delete) {
       extractRequestContext { ctx ⇒
         complete(dispatchRequest(ctx, None))
