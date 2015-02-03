@@ -1,7 +1,7 @@
 package aims
 
 import aims.core.Pagination
-import aims.cqrs.AbstractOperationService
+import aims.cqrs.OperationService
 import aims.model.Event
 import aims.routing.PatternMatcher
 import aims.routing.Patterns._
@@ -14,7 +14,7 @@ import akka.http.server.PathMatcher._
  * Date: 2014/12/24
  * @author Andy Ai
  */
-class CouponOperationResource extends AbstractOperationService[Coupon] {
+class CouponOperationResource extends OperationService[Coupon] {
   override def basicPattern(): PatternMatcher = PatternMatcher(ph("coupons" ~ Slash.?))
 
   override def identity(event: Event): Any = Tuples.tail(event.extractions.asInstanceOf[Product]).toString
