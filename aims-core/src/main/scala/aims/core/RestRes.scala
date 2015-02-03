@@ -13,8 +13,6 @@ import akka.http.model.{ HttpMethod, MediaType, MediaTypes }
 trait RestRes {
   type Handle = RestRes.Handler
 
-  type Result = RestRes.Result
-
   def method(): HttpMethod
 
   def pattern(): PatternMatcher
@@ -26,7 +24,7 @@ trait RestRes {
 }
 
 object RestRes {
-  type Result = HandleResult
 
-  type Handler = PartialFunction[Event, Result]
+  type Handler = PartialFunction[Event, HandleResult]
+
 }

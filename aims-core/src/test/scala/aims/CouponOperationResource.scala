@@ -1,7 +1,12 @@
 package aims
 
-import aims.core.{ Page, Pagination }
-import akka.http.model.Uri.Query
+import aims.core.Pagination
+import aims.cqrs.AbstractOperationService
+import aims.model.Event
+import aims.routing.PatternMatcher
+import aims.routing.Patterns._
+import aims.util.Tuples
+import akka.http.server.PathMatcher._
 
 /**
  * Component:
@@ -9,30 +14,28 @@ import akka.http.model.Uri.Query
  * Date: 2014/12/24
  * @author Andy Ai
  */
-class CouponOperationResource {
-  def patterns(): (String, String) = ("/coupons", "/#couponId")
+class CouponOperationResource extends AbstractOperationService[Coupon] {
+  override def basicPattern(): PatternMatcher = PatternMatcher(ph("coupons" ~ Slash.?))
 
-  def resourceType(): Class[Coupon] = {
-    classOf[Coupon]
+  override def identity(event: Event): Any = Tuples.tail(event.extractions.asInstanceOf[Product]).toString
+
+  override def identityPattern(): PatternMatcher = PatternMatcher(ph("coupons" / IntNumber ~ Slash.?))
+
+  override def get(event: Event): Option[Coupon] = {
+    Some(Coupon(1, "c-1", Some(1)))
   }
 
-  def get(pathParameters: Map[String, String], query: Query): Option[Coupon] = {
-    None
-  }
-
-  def update(pathParameters: Map[String, String], entity: Coupon): Unit = {
-
-  }
-
-  def insert(pathParameters: Map[String, String], entity: Coupon): Option[Coupon] = {
-    None
-  }
-
-  def delete(pathParameters: Map[String, String]): Unit = {
-
-  }
-
-  def pagination(pathParameters: Map[String, String], page: Page, query: Query): Pagination[Coupon] = {
+  override def pagination(event: Event): Pagination[Coupon] = {
     Pagination[Coupon](List(Coupon(1, "ff", Some(0))), 1, 1000, 1000)
   }
+
+  override def modify(event: Event): Unit = {}
+
+  override def update(event: Event): Unit = {}
+
+  override def insert(event: Event): Any = {
+    1
+  }
+
+  override def delete(event: Event): Unit = {}
 }

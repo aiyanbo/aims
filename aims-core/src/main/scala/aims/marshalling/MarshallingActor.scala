@@ -5,9 +5,10 @@ import aims.core.model.headers.XTotalCount
 import aims.json.Jackson
 import aims.model.Marshalling
 import akka.actor.{ Actor, ActorLogging }
+import akka.http.model.ContentTypes._
 import akka.http.model.StatusCodes._
 import akka.http.model.headers.{ Link, LinkParams, LinkValue }
-import akka.http.model.{ ContentTypes, HttpEntity, HttpRequest, HttpResponse }
+import akka.http.model.{ HttpEntity, HttpRequest, HttpResponse }
 
 import scala.collection.immutable
 import scala.runtime.BoxedUnit
@@ -24,14 +25,17 @@ class MarshallingActor extends Actor with ActorLogging {
     case Marshalling(unit: BoxedUnit, _, responder)                 ⇒ responder ! HttpResponse(OK)
     case Marshalling(str: String, _, responder)                     ⇒ responder ! HttpResponse(OK, entity = str)
     case Marshalling(number: Number, _, responder)                  ⇒ responder ! HttpResponse(OK, entity = number.toString)
-    case Marshalling(pagination: Pagination[_], request, responder) ⇒ responder ! makePagination(pagination, request)
-    case m ⇒
-      println(m)
+    case Marshalling(pagination: Pagination[_], request, responder) ⇒ responder ! marshalPagination(pagination, request)
+    case Marshalling(entity, _, responder)                          ⇒ responder ! marshalEntity(entity)
   }
 
-  private def makePagination(pagination: Pagination[_], request: HttpRequest): HttpResponse = {
+  private def marshalEntity(entity: Any): HttpResponse = {
+    HttpResponse(OK, entity = HttpEntity(`application/json`, Jackson.mapper.writeValueAsString(entity)))
+  }
+
+  private def marshalPagination(pagination: Pagination[_], request: HttpRequest): HttpResponse = {
     if (pagination.items.isEmpty) {
-      return HttpResponse(entity = HttpEntity(ContentTypes.`application/json`, "[]"))
+      return HttpResponse(entity = HttpEntity(`application/json`, "[]"))
     }
     pagination.links.filter {
       case LinkParams.next  ⇒ pagination.page < pagination.totalPage
@@ -44,8 +48,8 @@ class MarshallingActor extends Actor with ActorLogging {
       case LinkParams.first ⇒ LinkValue(request.uri.withQuery(request.uri.query.+:("page", 1.toString)), LinkParams.first)
       case LinkParams.last  ⇒ LinkValue(request.uri.withQuery(request.uri.query.+:("page", pagination.totalPage.toString)), LinkParams.last)
     } match {
-      case Nil   ⇒ HttpResponse(status = OK, headers = immutable.Seq(XTotalCount(pagination.totalCount)), entity = HttpEntity(ContentTypes.`application/json`, Jackson.mapper.writeValueAsString(pagination.items)))
-      case links ⇒ HttpResponse(status = OK, headers = immutable.Seq(Link(links: _*), XTotalCount(pagination.totalCount)), entity = HttpEntity(ContentTypes.`application/json`, Jackson.mapper.writeValueAsString(pagination.items)))
+      case Nil   ⇒ HttpResponse(status = OK, headers = immutable.Seq(XTotalCount(pagination.totalCount)), entity = HttpEntity(`application/json`, Jackson.mapper.writeValueAsString(pagination.items)))
+      case links ⇒ HttpResponse(status = OK, headers = immutable.Seq(Link(links: _*), XTotalCount(pagination.totalCount)), entity = HttpEntity(`application/json`, Jackson.mapper.writeValueAsString(pagination.items)))
     }
   }
 }
