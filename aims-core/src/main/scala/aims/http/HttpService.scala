@@ -33,8 +33,18 @@ trait HttpService extends Directives {
 
   private val router = system.actorOf(RouteActor.props(handlers))
 
-  def route = {
-    (get | delete) {
+  def remixRoute = queryRoute ~ commandRoute
+
+  def queryRoute = {
+    get {
+      extractRequestContext { ctx ⇒
+        complete(dispatchRequest(ctx, None))
+      }
+    }
+  }
+
+  def commandRoute = {
+    delete {
       extractRequestContext { ctx ⇒
         complete(dispatchRequest(ctx, None))
       }
