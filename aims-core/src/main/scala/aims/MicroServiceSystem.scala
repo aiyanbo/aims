@@ -35,7 +35,7 @@ class MicroServiceSystem(resources: List[RestRes], cqrs: CQRS = CQRS.REMIX) exte
     //        Future(HttpResponse(status = StatusCodes.OK))
     //      case request: HttpRequest ⇒ (router ? request).map(_.asInstanceOf[HttpResponse])
     //    }
-    val m = system.actorOf(Props[MarshallingActor], MarshallingActor.name)
+    system.actorOf(Props[MarshallingActor], MarshallingActor.name)
 
     implicit val flow = FlowMaterializer()
     val serverBinding = Http(system).bind(interface, port, backlog, options, settings)
