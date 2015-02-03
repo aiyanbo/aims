@@ -7,7 +7,7 @@ import aims.routing.PatternMatcher
 import aims.routing.Patterns._
 import aims.samples.dto.Coupon
 import aims.util.Tuples
-import akka.http.server.PathMatchers.{IntNumber, Slash}
+import akka.http.server.PathMatcher._
 
 /**
  * Component:
