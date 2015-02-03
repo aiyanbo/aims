@@ -1,9 +1,11 @@
 package aims.slick
 
-import aims.core.{ Page, Pagination }
+import aims.core.{Page, Pagination}
+import aims.cqrs.OperationService
+import aims.model.Event
 import akka.http.model.Uri.Query
 
-import scala.slick.jdbc.JdbcBackend.{ DatabaseDef, SessionDef }
+import scala.slick.jdbc.JdbcBackend.{DatabaseDef, SessionDef}
 
 /**
  * Component:
@@ -11,55 +13,69 @@ import scala.slick.jdbc.JdbcBackend.{ DatabaseDef, SessionDef }
  * Date: 14/12/26
  * @author Andy Ai
  */
-trait SlickOperationService[E] {
+trait SlickOperationService[E] extends OperationService[E] {
 
-  def database(): DatabaseDef
+  def queryDatabase(): DatabaseDef
 
-  val databaseDef = database()
+  def commandDatabase(): DatabaseDef
 
-  def update(pathParameters: Map[String, String], entity: E): Unit = {
-    databaseDef withSession {
+  val queryDef = queryDatabase()
+
+  val commandDef = commandDatabase()
+
+  override def get(event: Event): Option[E] = {
+    queryDef withSession {
       implicit session ⇒
-        updateWithSession(pathParameters, entity)
+        getWithSession(event.extractions.asInstanceOf[Product], event.request.uri.query)
     }
   }
 
-  def insert(pathParameters: Map[String, String], entity: E): Option[E] = {
-    databaseDef withSession {
+  override def pagination(event: Event): Pagination[E] = {
+    queryDef withSession {
       implicit session ⇒
-        insertWithSession(pathParameters, entity)
+        val query = event.request.uri.query
+        paginationWithSession(event.extractions.asInstanceOf[Product], Page(query), query)
     }
   }
 
-  def get(pathParameters: Map[String, String], query: Query): Option[E] = {
-    databaseDef withSession {
+  override def modify(event: Event): Unit = {
+    commandDef withSession {
       implicit session ⇒
-        getWithSession(pathParameters, query)
+        modifyWithSession(event.extractions.asInstanceOf[Product], event.payload.get)
     }
   }
 
-  def delete(pathParameters: Map[String, String]): Unit = {
-    databaseDef withSession {
+  override def update(event: Event): Unit = {
+    commandDef withSession {
       implicit session ⇒
-        deleteWithSession(pathParameters)
+        updateWithSession(event.extractions.asInstanceOf[Product], event.payload.get)
     }
   }
 
-  def pagination(pathParameters: Map[String, String], page: Page, query: Query): Pagination[E] = {
-    databaseDef withSession {
+  override def insert(event: Event): Any = {
+    commandDef withSession {
       implicit session ⇒
-        paginationWithSession(pathParameters, page, query)
+        insertWithSession(event.extractions.asInstanceOf[Product], event.payload.get)
     }
   }
 
-  def updateWithSession(pathParameters: Map[String, String], entity: E)(implicit session: SessionDef): Unit
+  override def delete(event: Event): Unit = {
+    commandDef withSession {
+      implicit session ⇒
+        deleteWithSession(event.extractions.asInstanceOf[Product])
+    }
+  }
 
-  def insertWithSession(pathParameters: Map[String, String], entity: E)(implicit session: SessionDef): Option[E]
+  def updateWithSession(extractions: Product, entity: String)(implicit session: SessionDef): Unit
 
-  def getWithSession(pathParameters: Map[String, String], query: Query)(implicit session: SessionDef): Option[E]
+  def modifyWithSession(extractions: Product, entity: String)(implicit session: SessionDef): Unit
 
-  def deleteWithSession(pathParameters: Map[String, String])(implicit session: SessionDef): Unit
+  def insertWithSession(extractions: Product, entity: String)(implicit session: SessionDef): Option[E]
 
-  def paginationWithSession(pathParameters: Map[String, String], page: Page, query: Query)(implicit session: SessionDef): Pagination[E]
+  def getWithSession(extractions: Product, query: Query)(implicit session: SessionDef): Option[E]
+
+  def deleteWithSession(extractions: Product)(implicit session: SessionDef): Unit
+
+  def paginationWithSession(extractions: Product, page: Page, query: Query)(implicit session: SessionDef): Pagination[E]
 
 }
