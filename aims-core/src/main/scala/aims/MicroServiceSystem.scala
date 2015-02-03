@@ -5,7 +5,6 @@ import aims.http.HttpServiceBinding
 import aims.marshalling.MarshallingActor
 import aims.model.CQRS
 import aims.model.CQRS.CQRS
-import aims.model.CQRS.CQRS
 import akka.actor.{ ActorSystem, Props }
 import akka.http.Http
 import akka.http.engine.server.ServerSettings
@@ -16,7 +15,6 @@ import akka.util.Timeout
 import com.typesafe.scalalogging.StrictLogging
 
 import scala.collection.immutable
-import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * Component:
@@ -55,6 +53,7 @@ class MicroServiceSystem(resources: List[RestRes], cqrs: CQRS = CQRS.REMIX) exte
       case CQRS.REMIX   ⇒ httpServiceBinding.remixRoute
     }
 
+    import system.dispatcher
     serverBinding startHandlingWith bindingRoute
     //    serverBinding.connections.foreach { connection ⇒
     //      logger.debug("Accepted new connection from " + connection.remoteAddress)
