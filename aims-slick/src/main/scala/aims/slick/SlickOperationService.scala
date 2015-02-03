@@ -1,11 +1,11 @@
 package aims.slick
 
-import aims.core.{Page, Pagination}
+import aims.core.{ Page, Pagination }
 import aims.cqrs.OperationService
 import aims.model.Event
 import akka.http.model.Uri.Query
 
-import scala.slick.jdbc.JdbcBackend.{DatabaseDef, SessionDef}
+import scala.slick.jdbc.JdbcBackend.{ DatabaseDef, SessionDef }
 
 /**
  * Component:
