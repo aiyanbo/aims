@@ -5,7 +5,7 @@ import akka.http.Http
 import akka.http.model.HttpResponse
 import akka.http.server.Directives._
 import akka.http.server.RouteResult
-import akka.stream.FlowMaterializer
+import akka.stream.ActorFlowMaterializer
 import com.google.common.net.HttpHeaders
 
 object TestServer extends App {
@@ -13,11 +13,9 @@ object TestServer extends App {
 
   import akka.TestServer.system.dispatcher
 
-  implicit val materializer = FlowMaterializer()
+  implicit val materializer = ActorFlowMaterializer()
 
   //  import akka.http.marshallers.xml.ScalaXmlSupport._
-
-  val binding = Http().bind(interface = "localhost", port = 8080)
 
   val route = {
     get {
@@ -40,8 +38,8 @@ object TestServer extends App {
     }
   }
 
-  val materializedMap = binding startHandlingWith route
+  val bindingFuture = Http().bindAndstartHandlingWith(route, interface = "localhost", port = 8080)
   println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
   scala.io.StdIn.readLine()
-  binding.unbind(materializedMap).onComplete(_ ⇒ system.shutdown())
+  bindingFuture.flatMap(_.unbind()).onComplete(_ ⇒ system.shutdown())
 }

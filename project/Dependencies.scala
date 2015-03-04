@@ -5,7 +5,7 @@ import sbt._
 object Dependencies {
 
   object Versions {
-    val akka = "2.3.7"
+    val akka = "2.3.9"
     val log4j2 = "2.1"
     val slick = "2.1.0"
     val scala = "2.11.5"

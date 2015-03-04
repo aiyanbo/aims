@@ -15,7 +15,6 @@ import scala.concurrent.duration._
  */
 object SimpleApp extends App {
   implicit val system = ActorSystem("aims")
-  implicit val materializer = FlowMaterializer()
   implicit val timeout: Timeout = 5000.millis
 
   private val service = new MicroServiceSystem(List(new PingRes, new CheckNameRes) ++ new CouponOperationResource().resources())

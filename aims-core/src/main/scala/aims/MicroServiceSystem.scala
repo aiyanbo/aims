@@ -10,7 +10,7 @@ import akka.http.Http
 import akka.http.engine.server.ServerSettings
 import akka.http.model.HttpMethods
 import akka.io.Inet
-import akka.stream.FlowMaterializer
+import akka.stream.{ ActorFlowMaterializer, FlowMaterializer }
 import akka.util.Timeout
 import com.typesafe.scalalogging.StrictLogging
 
@@ -35,8 +35,7 @@ class MicroServiceSystem(resources: List[RestRes], cqrs: CQRS = CQRS.REMIX) exte
     //    }
     system.actorOf(Props[MarshallingActor], MarshallingActor.name)
 
-    implicit val flow = FlowMaterializer()
-    val serverBinding = Http(system).bind(interface, port, backlog, options, settings)
+    implicit val materializer = ActorFlowMaterializer()
 
     val cqrsResources = resources.filter(r ⇒ {
       cqrs match {
@@ -46,7 +45,7 @@ class MicroServiceSystem(resources: List[RestRes], cqrs: CQRS = CQRS.REMIX) exte
       }
     })
 
-    val httpServiceBinding = new HttpServiceBinding(system, flow, cqrsResources)
+    val httpServiceBinding = new HttpServiceBinding(system, materializer, cqrsResources)
     val bindingRoute = cqrs match {
       case CQRS.QUERY   ⇒ httpServiceBinding.queryRoute
       case CQRS.COMMAND ⇒ httpServiceBinding.commandRoute
@@ -54,11 +53,8 @@ class MicroServiceSystem(resources: List[RestRes], cqrs: CQRS = CQRS.REMIX) exte
     }
 
     import system.dispatcher
-    serverBinding startHandlingWith bindingRoute
-    //    serverBinding.connections.foreach { connection ⇒
-    //      logger.debug("Accepted new connection from " + connection.remoteAddress)
-    //      connection handleWithAsyncHandler requestHandler
-    //    }
+    val bindingFuture = Http().bindAndstartHandlingWith(bindingRoute, interface, port, backlog, options, settings)
+
   }
 
 }
