@@ -84,7 +84,7 @@ abstract class OperationService[E] extends CommandService with QueryService[E] {
         }
       },
       new RestRes {
-        override def pattern(): PatternMatcher = identityPattern()
+        override def pattern(): PatternMatcher = basicPattern()
 
         override def method(): HttpMethod = POST
 
