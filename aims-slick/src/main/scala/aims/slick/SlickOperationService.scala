@@ -5,6 +5,7 @@ import aims.cqrs.OperationService
 import aims.model.Event
 import akka.http.model.Uri.Query
 
+import scala.runtime.BoxedUnit
 import scala.slick.jdbc.JdbcBackend.{ DatabaseDef, SessionDef }
 
 /**
@@ -34,7 +35,10 @@ trait SlickOperationService[E] extends OperationService[E] {
     queryDef withSession {
       implicit session ⇒
         val query = event.request.uri.query
-        paginationWithSession(event.extractions.asInstanceOf[Product], Page(query), query)
+        event.extractions match {
+          case extractions: Product ⇒ paginationWithSession(extractions, Page(query), query)
+          case _                    ⇒ paginationWithSession(null, Page(query), query)
+        }
     }
   }
 
@@ -55,7 +59,10 @@ trait SlickOperationService[E] extends OperationService[E] {
   override def insert(event: Event): Any = {
     commandDef withSession {
       implicit session ⇒
-        insertWithSession(event.extractions.asInstanceOf[Product], event.payload.get)
+        event.extractions match {
+          case extractions: Product ⇒ insertWithSession(event.extractions.asInstanceOf[Product], event.payload.get)
+          case _                    ⇒ insertWithSession(null, event.payload.get)
+        }
     }
   }
 
