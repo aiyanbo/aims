@@ -26,11 +26,19 @@ class MarshallingActor extends Actor with ActorLogging {
     case Marshalling(str: String, _, responder)                     ⇒ responder ! HttpResponse(OK, entity = str)
     case Marshalling(number: Number, _, responder)                  ⇒ responder ! HttpResponse(OK, entity = number.toString)
     case Marshalling(pagination: Pagination[_], request, responder) ⇒ responder ! marshalPagination(pagination, request)
+    case Marshalling(throwable: Throwable, request, responder)      ⇒ responder ! marshalThrowable(throwable)
     case Marshalling(entity, _, responder)                          ⇒ responder ! marshalEntity(entity)
   }
 
   private def marshalEntity(entity: Any): HttpResponse = {
     HttpResponse(OK, entity = HttpEntity(`application/json`, Jackson.mapper.writeValueAsString(entity)))
+  }
+
+  private def marshalThrowable(throwable: Throwable) = {
+    throwable match {
+      case runtime: RuntimeException ⇒ HttpResponse(BadRequest, entity = runtime.getLocalizedMessage)
+      case err                       ⇒ HttpResponse(InternalServerError, entity = err.getLocalizedMessage)
+    }
   }
 
   private def marshalPagination(pagination: Pagination[_], request: HttpRequest): HttpResponse = {

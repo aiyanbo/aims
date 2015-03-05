@@ -22,76 +22,82 @@ abstract class OperationService[E] extends CommandService with QueryService[E] {
 
   def identity(event: Event): Any
 
-  def resources(): List[RestRes] = {
-    List(
-      new RestRes {
-        override def pattern(): PatternMatcher = identityPattern()
+  def resources(): List[RestRes] = List(
+    InsertOperation, DeleteOperation, UpdateOperation, ModifyOperation, FindOperation, ListOperation)
 
-        override def method(): HttpMethod = GET
+  object InsertOperation extends RestRes {
+    override val pattern: PatternMatcher = basicPattern()
 
-        override def handle: Handle = {
-          case event: Event ⇒ get(event) match {
-            case Some(dto) ⇒ dto
-            case None      ⇒ HttpResponse(NotFound)
-          }
-        }
-      },
-      new RestRes {
-        override def pattern(): PatternMatcher = basicPattern()
+    override val method: HttpMethod = POST
 
-        override def method(): HttpMethod = GET
-
-        override def handle: Handle = {
-          case event: Event ⇒ pagination(event)
-        }
-      },
-      new RestRes {
-        override def pattern(): PatternMatcher = identityPattern()
-
-        override def method(): HttpMethod = PATCH
-
-        override def handle: Handle = {
-          case event: Event ⇒
-            if (Tuples.tail(event.extractions) == identity(event)) {
-              modify(event)
-            } else {
-              new IllegalArgumentException("Identity not matched")
-            }
-        }
-      },
-      new RestRes {
-        override def pattern(): PatternMatcher = identityPattern()
-
-        override def method(): HttpMethod = PUT
-
-        override def handle: Handle = {
-          case event: Event ⇒
-            if (Tuples.tail(event.extractions) == identity(event)) {
-              update(event)
-            } else {
-              new IllegalArgumentException("Identity not matched")
-            }
-        }
-      },
-      new RestRes {
-        override def pattern(): PatternMatcher = identityPattern()
-
-        override def method(): HttpMethod = DELETE
-
-        override def handle: Handle = {
-          case event: Event ⇒
-            delete(event)
-        }
-      },
-      new RestRes {
-        override def pattern(): PatternMatcher = basicPattern()
-
-        override def method(): HttpMethod = POST
-
-        override def handle: Handle = {
-          case event: Event ⇒
-            insert(event)
-        }
-      })
+    override def handle: Handle = {
+      case event: Event ⇒
+        insert(event)
+    }
   }
+
+  object DeleteOperation extends RestRes {
+    override val pattern: PatternMatcher = identityPattern()
+
+    override val method: HttpMethod = DELETE
+
+    override def handle: Handle = {
+      case event: Event ⇒
+        delete(event)
+    }
+  }
+
+  object UpdateOperation extends RestRes {
+    override val pattern: PatternMatcher = identityPattern()
+
+    override val method: HttpMethod = PUT
+
+    override def handle: Handle = {
+      case event: Event ⇒
+        if (Tuples.tail(event.extractions) == identity(event)) {
+          update(event)
+        } else {
+          new IllegalArgumentException("Identity not matched")
+        }
+    }
+  }
+
+  object ModifyOperation extends RestRes {
+    override val pattern: PatternMatcher = identityPattern()
+
+    override val method: HttpMethod = PATCH
+
+    override def handle: Handle = {
+      case event: Event ⇒
+        if (Tuples.tail(event.extractions) == identity(event)) {
+          modify(event)
+        } else {
+          new IllegalArgumentException("Identity not matched")
+        }
+    }
+  }
+
+  object FindOperation extends RestRes {
+    override val pattern: PatternMatcher = identityPattern()
+
+    override val method: HttpMethod = GET
+
+    override def handle: Handle = {
+      case event: Event ⇒ get(event) match {
+        case Some(dto) ⇒ dto
+        case None      ⇒ HttpResponse(NotFound)
+      }
+    }
+  }
+
+  object ListOperation extends RestRes {
+    override val pattern: PatternMatcher = basicPattern()
+
+    override val method: HttpMethod = GET
+
+    override def handle: Handle = {
+      case event: Event ⇒ pagination(event)
+    }
+  }
+
 }

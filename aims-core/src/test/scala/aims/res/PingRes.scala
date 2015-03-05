@@ -14,9 +14,9 @@ import akka.http.model.{ HttpMethod, HttpMethods, HttpResponse }
  */
 class PingRes extends RestRes {
 
-  override def method(): HttpMethod = HttpMethods.GET
+  override val method: HttpMethod = HttpMethods.GET
 
-  override def pattern(): PatternMatcher = PatternMatcher(ph("ping"))
+  override val pattern: PatternMatcher = PatternMatcher(ph("ping"))
 
   override def handle: Handle = {
 

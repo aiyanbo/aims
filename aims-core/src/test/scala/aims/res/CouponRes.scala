@@ -12,9 +12,9 @@ import akka.http.model.{ HttpMethod, HttpMethods }
  * @author Andy Ai
  */
 class CouponRes extends RestRes {
-  override def method(): HttpMethod = HttpMethods.GET
+  override val method: HttpMethod = HttpMethods.GET
 
-  override def pattern(): PatternMatcher = PatternMatcher("/coupons/#couponId")
+  override val pattern: PatternMatcher = PatternMatcher("/coupons/#couponId")
 
   override def handle: Handle = {
     case Event(_, extractions, _, _) ⇒

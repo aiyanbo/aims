@@ -13,11 +13,11 @@ import akka.http.model.{ HttpMethod, MediaType, MediaTypes }
 trait RestRes {
   type Handle = RestRes.Handler
 
-  def method(): HttpMethod
+  val method: HttpMethod
 
-  def pattern(): PatternMatcher
+  val pattern: PatternMatcher
 
-  def acceptMediaTypes(): List[MediaType] = List(MediaTypes.`application/json`)
+  val acceptMediaTypes: List[MediaType] = List(MediaTypes.`application/json`)
 
   def handle: Handle
 

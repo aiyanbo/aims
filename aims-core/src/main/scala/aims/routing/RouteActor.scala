@@ -27,7 +27,7 @@ private[aims] class RouteActor(res: List[RestRes]) extends Actor with ActorLoggi
       val request = ctx.request
       val (path, method) = (request.uri.path, request.method)
       res map { r ⇒
-        (r.pattern().apply(path), r)
+        (r.pattern.apply(path), r)
       } filter {
         r ⇒
           r._1 match {
@@ -37,7 +37,7 @@ private[aims] class RouteActor(res: List[RestRes]) extends Actor with ActorLoggi
       } match {
         case Nil ⇒ marshaller ! Marshalling(HttpResponse(NotFound), request, sender())
         case rs ⇒
-          rs.find(r ⇒ r._2.method() == method) match {
+          rs.find(r ⇒ r._2.method == method) match {
             case None ⇒ marshaller ! Marshalling(HttpResponse(MethodNotAllowed), request, sender())
             case Some(r) ⇒
               val worker = actorPool.getOrElseUpdate(r._2, context.actorOf(RestResActor.props(r._2)))

@@ -14,9 +14,9 @@ import akka.http.model.{ HttpMethod, HttpMethods, HttpResponse, StatusCodes }
  * @author Andy Ai
  */
 class CheckNameRes extends RestRes {
-  override def method(): HttpMethod = HttpMethods.POST
+  override val method: HttpMethod = HttpMethods.POST
 
-  override def pattern(): PatternMatcher = PatternMatcher(ph("check_name"))
+  override val pattern: PatternMatcher = PatternMatcher(ph("check_name"))
 
   override def handle: Handle = {
     case event: Event ⇒
