@@ -10,6 +10,7 @@ import akka.http.Http
 import akka.http.engine.server.ServerSettings
 import akka.http.model.HttpMethods
 import akka.io.Inet
+import akka.stream.scaladsl.Sink
 import akka.stream.{ ActorFlowMaterializer, FlowMaterializer }
 import akka.util.Timeout
 import com.typesafe.scalalogging.StrictLogging
@@ -53,7 +54,11 @@ class MicroServiceSystem(resources: List[RestRes], cqrs: CQRS = CQRS.REMIX) exte
     }
 
     import system.dispatcher
-    val bindingFuture = Http().bindAndstartHandlingWith(bindingRoute, interface, port, backlog, options, settings)
+    val serverSource = Http().bind(interface, port, backlog, options, settings)
+    serverSource.to(Sink.foreach { connection ⇒
+      println("Accepted new connection from " + connection.remoteAddress)
+      connection handleWith bindingRoute
+    }).run()
 
   }
 
