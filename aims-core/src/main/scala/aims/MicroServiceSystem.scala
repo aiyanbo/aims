@@ -40,8 +40,8 @@ class MicroServiceSystem(resources: List[RestRes], cqrs: CQRS = CQRS.REMIX) exte
 
     val cqrsResources = resources.filter(r ⇒ {
       cqrs match {
-        case CQRS.QUERY   ⇒ r.method() == HttpMethods.GET
-        case CQRS.COMMAND ⇒ r.method() != HttpMethods.GET
+        case CQRS.QUERY   ⇒ r.method == HttpMethods.GET
+        case CQRS.COMMAND ⇒ r.method != HttpMethods.GET
         case CQRS.REMIX   ⇒ true
       }
     })
