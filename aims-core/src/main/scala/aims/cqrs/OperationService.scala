@@ -54,7 +54,7 @@ abstract class OperationService[E] extends CommandService with QueryService[E] {
 
     override def handle: Handle = {
       case event: Event ⇒
-        if (Tuples.tail(event.extractions) == identity(event)) {
+        if (Tuples.tail(event.extractions.asInstanceOf[Product]) == identity(event)) {
           update(event)
         } else {
           new IllegalArgumentException("Identity not matched")
@@ -69,7 +69,7 @@ abstract class OperationService[E] extends CommandService with QueryService[E] {
 
     override def handle: Handle = {
       case event: Event ⇒
-        if (Tuples.tail(event.extractions) == identity(event)) {
+        if (Tuples.tail(event.extractions.asInstanceOf[Product]) == identity(event)) {
           modify(event)
         } else {
           new IllegalArgumentException("Identity not matched")

@@ -17,7 +17,7 @@ import akka.http.server.PathMatcher._
 class CouponOperationResource extends OperationService[Coupon] {
   override def basicPattern(): PatternMatcher = PatternMatcher(ph("coupons" ~ Slash.?))
 
-  override def identity(event: Event): Any = Tuples.tail(event.extractions.asInstanceOf[Product]).toString
+  override def identity(event: Event): Any = Tuples.tail(event.extractions.asInstanceOf[Product])
 
   override def identityPattern(): PatternMatcher = PatternMatcher(ph("coupons" / IntNumber ~ Slash.?))
 
