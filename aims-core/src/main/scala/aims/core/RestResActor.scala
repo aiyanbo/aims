@@ -1,9 +1,9 @@
 package aims.core
 
 import aims.marshalling.MarshallingActor
-import aims.model.HandleResult.{Complete, Failure, Rejected, Success}
-import aims.model.{Event, HandleResult, Marshalling}
-import akka.actor.{Actor, ActorSelection, Props}
+import aims.model.HandleResult.{ Complete, Failure, Rejected, Success }
+import aims.model.{ Event, HandleResult, Marshalling }
+import akka.actor.{ Actor, ActorSelection, Props }
 import akka.http.model._
 
 /**
@@ -23,10 +23,10 @@ class RestResActor(res: RestRes) extends Actor {
   private def execute(event: Event) = {
     try {
       res.handle.applyOrElse(event, unhandle) match {
-        case Complete(response) ⇒ response
-        case Success(result) ⇒ result
+        case Complete(response)   ⇒ response
+        case Success(result)      ⇒ result
         case Rejected(rejections) ⇒ rejections
-        case Failure(causes) ⇒ causes
+        case Failure(causes)      ⇒ causes
       }
     } catch {
       case e: Throwable ⇒ e

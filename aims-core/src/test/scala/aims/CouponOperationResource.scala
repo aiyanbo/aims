@@ -19,7 +19,6 @@ class CouponOperationResource extends OperationService[Coupon] {
 
   override def identityPattern(): PatternMatcher = PatternMatcher("/coupons/#couponId")
 
-
   override def identity(event: Event): Any = Tuples.tail(event.extractions.asInstanceOf[Product])
 
   override def get(event: Event): Option[Coupon] = {

@@ -4,11 +4,11 @@ import aims.core.Pagination
 import aims.core.model.headers.XTotalCount
 import aims.json.Jackson
 import aims.model.Marshalling
-import akka.actor.{Actor, ActorLogging}
+import akka.actor.{ Actor, ActorLogging }
 import akka.http.model.ContentTypes._
 import akka.http.model.StatusCodes._
-import akka.http.model.headers.{Link, LinkParams, LinkValue}
-import akka.http.model.{HttpEntity, HttpRequest, HttpResponse}
+import akka.http.model.headers.{ Link, LinkParams, LinkValue }
+import akka.http.model.{ HttpEntity, HttpRequest, HttpResponse }
 
 import scala.collection.immutable
 import scala.runtime.BoxedUnit
@@ -22,13 +22,13 @@ import scala.util.Try
  */
 class MarshallingActor extends Actor with ActorLogging {
   override def receive: Receive = {
-    case Marshalling(response: HttpResponse, _, responder) ⇒ responder ! response
-    case Marshalling(unit: BoxedUnit, _, responder) ⇒ responder ! HttpResponse(OK)
-    case Marshalling(str: String, _, responder) ⇒ responder ! HttpResponse(OK, entity = str)
-    case Marshalling(number: Number, _, responder) ⇒ responder ! HttpResponse(OK, entity = number.toString)
+    case Marshalling(response: HttpResponse, _, responder)          ⇒ responder ! response
+    case Marshalling(unit: BoxedUnit, _, responder)                 ⇒ responder ! HttpResponse(OK)
+    case Marshalling(str: String, _, responder)                     ⇒ responder ! HttpResponse(OK, entity = str)
+    case Marshalling(number: Number, _, responder)                  ⇒ responder ! HttpResponse(OK, entity = number.toString)
     case Marshalling(pagination: Pagination[_], request, responder) ⇒ responder ! marshalPagination(pagination, request)
-    case Marshalling(throwable: Throwable, request, responder) ⇒ responder ! marshalThrowable(throwable)
-    case Marshalling(entity, _, responder) ⇒ responder ! marshalEntity(entity)
+    case Marshalling(throwable: Throwable, request, responder)      ⇒ responder ! marshalThrowable(throwable)
+    case Marshalling(entity, _, responder)                          ⇒ responder ! marshalEntity(entity)
   }
 
   private def marshalEntity(entity: Any): HttpResponse = {
@@ -38,12 +38,12 @@ class MarshallingActor extends Actor with ActorLogging {
   private def marshalThrowable(throwable: Throwable) = {
     log.error(throwable, "handle has exception")
     val message = throwable.getMessage match {
-      case m: String => m
-      case _ => throwable.toString
+      case m: String ⇒ m
+      case _         ⇒ throwable.toString
     }
     throwable match {
       case runtime: RuntimeException ⇒ HttpResponse(BadRequest, entity = message)
-      case err ⇒ HttpResponse(InternalServerError, entity = message)
+      case err                       ⇒ HttpResponse(InternalServerError, entity = message)
     }
   }
 
@@ -52,17 +52,17 @@ class MarshallingActor extends Actor with ActorLogging {
       return HttpResponse(entity = HttpEntity(`application/json`, "[]"))
     }
     pagination.links.filter {
-      case LinkParams.next ⇒ pagination.page < pagination.totalPage
-      case LinkParams.prev ⇒ pagination.page - 1 > 1
+      case LinkParams.next  ⇒ pagination.page < pagination.totalPage
+      case LinkParams.prev  ⇒ pagination.page - 1 > 1
       case LinkParams.first ⇒ pagination.page > 1
-      case LinkParams.last ⇒ pagination.page < pagination.totalPage
+      case LinkParams.last  ⇒ pagination.page < pagination.totalPage
     }.map {
-      case LinkParams.next ⇒ LinkValue(request.uri.withQuery(request.uri.query.+:("page", (pagination.page + 1).toString)), LinkParams.next)
-      case LinkParams.prev ⇒ LinkValue(request.uri.withQuery(request.uri.query.+:("page", (pagination.page - 1).toString)), LinkParams.prev)
+      case LinkParams.next  ⇒ LinkValue(request.uri.withQuery(request.uri.query.+:("page", (pagination.page + 1).toString)), LinkParams.next)
+      case LinkParams.prev  ⇒ LinkValue(request.uri.withQuery(request.uri.query.+:("page", (pagination.page - 1).toString)), LinkParams.prev)
       case LinkParams.first ⇒ LinkValue(request.uri.withQuery(request.uri.query.+:("page", 1.toString)), LinkParams.first)
-      case LinkParams.last ⇒ LinkValue(request.uri.withQuery(request.uri.query.+:("page", pagination.totalPage.toString)), LinkParams.last)
+      case LinkParams.last  ⇒ LinkValue(request.uri.withQuery(request.uri.query.+:("page", pagination.totalPage.toString)), LinkParams.last)
     } match {
-      case Nil ⇒ HttpResponse(status = OK, headers = immutable.Seq(XTotalCount(pagination.totalCount)), entity = HttpEntity(`application/json`, Jackson.mapper.writeValueAsString(pagination.items)))
+      case Nil   ⇒ HttpResponse(status = OK, headers = immutable.Seq(XTotalCount(pagination.totalCount)), entity = HttpEntity(`application/json`, Jackson.mapper.writeValueAsString(pagination.items)))
       case links ⇒ HttpResponse(status = OK, headers = immutable.Seq(Link(links: _*), XTotalCount(pagination.totalCount)), entity = HttpEntity(`application/json`, Jackson.mapper.writeValueAsString(pagination.items)))
     }
   }
