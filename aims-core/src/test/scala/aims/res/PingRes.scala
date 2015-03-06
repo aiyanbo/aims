@@ -16,7 +16,7 @@ class PingRes extends RestRes {
 
   override val method: HttpMethod = HttpMethods.GET
 
-  override val pattern: PatternMatcher = PatternMatcher(ph("ping"))
+  override val pattern: PatternMatcher = PatternMatcher("/ping")
 
   override def handle: Handle = {
 

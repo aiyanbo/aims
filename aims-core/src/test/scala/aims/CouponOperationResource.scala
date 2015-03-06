@@ -15,14 +15,16 @@ import akka.http.server.PathMatcher._
  * @author Andy Ai
  */
 class CouponOperationResource extends OperationService[Coupon] {
-  override def basicPattern(): PatternMatcher = PatternMatcher(ph("coupons" ~ Slash.?))
+  override def basicPattern(): PatternMatcher = PatternMatcher("/coupons")
+
+  override def identityPattern(): PatternMatcher = PatternMatcher("/coupons/#couponId")
+
 
   override def identity(event: Event): Any = Tuples.tail(event.extractions.asInstanceOf[Product])
 
-  override def identityPattern(): PatternMatcher = PatternMatcher(ph("coupons" / IntNumber ~ Slash.?))
-
   override def get(event: Event): Option[Coupon] = {
-    Some(Coupon(1, "c-1", Some(1)))
+    throw new NullPointerException
+    Some(Coupon(event.extractions.asInstanceOf[Product].productElement(0).asInstanceOf[Int], "c-1", Some(1)))
   }
 
   override def pagination(event: Event): Pagination[Coupon] = {
@@ -34,7 +36,7 @@ class CouponOperationResource extends OperationService[Coupon] {
   override def update(event: Event): Unit = {}
 
   override def insert(event: Event): Any = {
-    1
+    s"insert with ${event.request.uri.path}"
   }
 
   override def delete(event: Event): Unit = {}

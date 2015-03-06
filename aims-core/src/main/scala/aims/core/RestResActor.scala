@@ -1,9 +1,9 @@
 package aims.core
 
 import aims.marshalling.MarshallingActor
-import aims.model.HandleResult.{ Complete, Failure, Rejected, Success }
-import aims.model.{ Event, HandleResult, Marshalling }
-import akka.actor.{ Actor, ActorSelection, Props }
+import aims.model.HandleResult.{Complete, Failure, Rejected, Success}
+import aims.model.{Event, HandleResult, Marshalling}
+import akka.actor.{Actor, ActorSelection, Props}
 import akka.http.model._
 
 /**
@@ -17,20 +17,19 @@ class RestResActor(res: RestRes) extends Actor {
   private lazy val marshaller: ActorSelection = context.actorSelection("/user/" + MarshallingActor.name)
 
   override def receive: Receive = {
-    case event: Event ⇒
-      marshaller ! Marshalling(execute(event), event.request, event.responder)
+    case event: Event ⇒ marshaller ! Marshalling(execute(event), event.request, event.responder)
   }
 
   private def execute(event: Event) = {
     try {
       res.handle.applyOrElse(event, unhandle) match {
-        case Complete(response)   ⇒ response
-        case Success(result)      ⇒ result
+        case Complete(response) ⇒ response
+        case Success(result) ⇒ result
         case Rejected(rejections) ⇒ rejections
-        case Failure(causes)      ⇒ causes
+        case Failure(causes) ⇒ causes
       }
     } catch {
-      case e: Throwable ⇒ HttpResponse(StatusCodes.InternalServerError)
+      case e: Throwable ⇒ e
     }
   }
 
