@@ -48,7 +48,7 @@ object PatternMatcher {
           Some(())
         } else {
           val segments = path.toString().split("/")
-          Some(Lists.toTuple(parameters.map(s ⇒ if (s._2) segments(s._1).toInt else segments(s._1)).toList))
+          Some(Lists.toTuple(parameters.map(s ⇒ if (s._2) segments(s._1).toLong else segments(s._1)).toList))
         }
       } else {
         None
