@@ -7,9 +7,10 @@ object Dependencies {
   object Versions {
     val akka = "2.3.9"
     val log4j2 = "2.1"
+    val guava = "18.0"
     val slick = "2.1.0"
     val scala = "2.11.5"
-    val jackson = "2.4.4"
+    val jackson = "2.5.1"
     val akkaHttp = "1.0-M4"
     val scalaTest = "2.2.2"
     val scalaLogging = "3.1.0"
@@ -20,6 +21,7 @@ object Dependencies {
   }
 
   object Compile {
+    val guava = "com.google.guava" % "guava" % Versions.guava
     val slick = "com.typesafe.slick" %% "slick" % Versions.slick
     val akka = "com.typesafe.akka" %% "akka-actor" % Versions.akka
     val log4j2Api = "org.apache.logging.log4j" % "log4j-api" % Versions.log4j2
@@ -34,7 +36,7 @@ object Dependencies {
 
   import aims.Dependencies.Compile._
 
-  val core = Seq(log4j2Api, log4j2Core, log4j2Slf4j, scalaLogging, akka, akkaStream, akkaHttp, akkaHttpCore, jackson, Test.scalaTest)
+  val core = Seq(log4j2Api, log4j2Core, log4j2Slf4j, guava, scalaLogging, akka, akkaStream, akkaHttp, akkaHttpCore, jackson, Test.scalaTest)
 
   val slick = Seq(Compile.slick, Test.scalaTest)
 
