@@ -7,6 +7,7 @@ import akka.http.server.PathMatcher
 import akka.http.server.PathMatcher.{ Matched, Unmatched }
 
 import scala.collection.mutable.ListBuffer
+import scala.language.implicitConversions
 
 /**
  * Component:
@@ -17,6 +18,10 @@ import scala.collection.mutable.ListBuffer
 
 trait PatternMatcher {
   def apply(path: Uri.Path): Option[Any]
+
+  def ~(pm: PatternMatcher): PatternMatcher
+
+  def /(pm: PatternMatcher): PatternMatcher
 }
 
 object PatternMatcher {
@@ -28,6 +33,10 @@ object PatternMatcher {
         case Unmatched               ⇒ None
       }
     }
+
+    override def ~(pm: PatternMatcher): PatternMatcher = throw new UnsupportedOperationException
+
+    override def /(pm: PatternMatcher): PatternMatcher = throw new UnsupportedOperationException
   }
 
   final case class AimsPathMatcher(pm: String) extends PatternMatcher {
@@ -54,6 +63,10 @@ object PatternMatcher {
         None
       }
     }
+
+    override def ~(pm: PatternMatcher): PatternMatcher = new AimsPathMatcher(this.pm + pm.asInstanceOf[AimsPathMatcher].pm)
+
+    override def /(pm: PatternMatcher): PatternMatcher = new AimsPathMatcher(this.pm + "/" + pm.asInstanceOf[AimsPathMatcher].pm)
   }
 
   @deprecated()
@@ -64,4 +77,6 @@ object PatternMatcher {
   def apply(pm: String): PatternMatcher = {
     new AimsPathMatcher(pm)
   }
+
+  implicit def stringConversion(pm: String): AimsPathMatcher = new AimsPathMatcher(pm)
 }

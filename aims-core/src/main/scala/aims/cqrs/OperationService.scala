@@ -37,7 +37,7 @@ abstract class OperationService[E] extends CommandService with QueryService[E] {
   }
 
   object DeleteOperation extends RestRes {
-    override val pattern: PatternMatcher = identityPattern()
+    override val pattern: PatternMatcher = basicPattern() / identityPattern()
 
     override val method: HttpMethod = DELETE
 
@@ -48,7 +48,7 @@ abstract class OperationService[E] extends CommandService with QueryService[E] {
   }
 
   object UpdateOperation extends RestRes {
-    override val pattern: PatternMatcher = identityPattern()
+    override val pattern: PatternMatcher = basicPattern() / identityPattern()
 
     override val method: HttpMethod = PUT
 
@@ -63,7 +63,7 @@ abstract class OperationService[E] extends CommandService with QueryService[E] {
   }
 
   object ModifyOperation extends RestRes {
-    override val pattern: PatternMatcher = identityPattern()
+    override val pattern: PatternMatcher = basicPattern() / identityPattern()
 
     override val method: HttpMethod = PATCH
 
@@ -78,7 +78,7 @@ abstract class OperationService[E] extends CommandService with QueryService[E] {
   }
 
   object FindOperation extends RestRes {
-    override val pattern: PatternMatcher = identityPattern()
+    override val pattern: PatternMatcher = basicPattern() / identityPattern()
 
     override val method: HttpMethod = GET
 

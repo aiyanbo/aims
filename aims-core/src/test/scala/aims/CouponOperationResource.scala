@@ -3,10 +3,9 @@ package aims
 import aims.core.Pagination
 import aims.cqrs.OperationService
 import aims.model.Event
+import aims.routing.PatternMatcher._
 import aims.routing.PatternMatcher
-import aims.routing.Patterns._
 import aims.util.Tuples
-import akka.http.server.PathMatcher._
 
 /**
  * Component:
@@ -15,15 +14,14 @@ import akka.http.server.PathMatcher._
  * @author Andy Ai
  */
 class CouponOperationResource extends OperationService[Coupon] {
-  override def basicPattern(): PatternMatcher = PatternMatcher("/coupons")
+  override def basicPattern(): PatternMatcher = "/coupons"
 
-  override def identityPattern(): PatternMatcher = PatternMatcher("/coupons/#couponId")
+  override def identityPattern(): PatternMatcher = "#couponId"
 
   override def identity(event: Event): Any = Tuples.tail(event.extractions.asInstanceOf[Product])
 
   override def get(event: Event): Option[Coupon] = {
-    throw new NullPointerException
-    Some(Coupon(event.extractions.asInstanceOf[Product].productElement(0).asInstanceOf[Int], "c-1", Some(1)))
+    Some(Coupon(event.extractions.asInstanceOf[Tuple1[Long]]._1.toInt, "c-1", Some(1)))
   }
 
   override def pagination(event: Event): Pagination[Coupon] = {
