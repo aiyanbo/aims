@@ -1,7 +1,7 @@
 package aims.cqrs
 
+import aims.core.Restlet
 import aims.core.RestletResult._
-import aims.core.{ Restlet, RestletResult }
 import aims.model.Event
 import aims.routing.PatternMatcher
 import aims.util.Tuples
