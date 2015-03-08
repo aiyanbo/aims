@@ -33,12 +33,7 @@ class MicroServiceSystem(resources: List[RestRes], cqrs: CQRS = CQRS.REMIX) exte
   def start(interface: String, port: Int = 80, backlog: Int = 100,
             options: immutable.Traversable[Inet.SocketOption] = Nil,
             settings: Option[ServerSettings] = None)(implicit system: ActorSystem, timeout: Timeout): Unit = {
-
-    //    val requestHandler: HttpRequest ⇒ Future[HttpResponse] = {
-    //      case HttpRequest(HttpMethods.GET, Uri.Path("/favicon.ico"), _, _, _) ⇒
-    //        Future(HttpResponse(status = StatusCodes.OK))
-    //      case request: HttpRequest ⇒ (router ? request).map(_.asInstanceOf[HttpResponse])
-    //    }
+    //crate marshall actor
     system.actorOf(Props[MarshallingActor], MarshallingActor.name)
 
     implicit val materializer = ActorFlowMaterializer()
