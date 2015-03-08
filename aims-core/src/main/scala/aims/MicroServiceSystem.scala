@@ -25,6 +25,11 @@ import scala.collection.immutable
  */
 class MicroServiceSystem(resources: List[RestRes], cqrs: CQRS = CQRS.REMIX) extends StrictLogging {
 
+  def start()(implicit system: ActorSystem, timeout: Timeout): Unit = {
+    val config = system.settings.config
+    start(interface = config.getString("aims.host"), port = config.getInt("aims.port"))
+  }
+
   def start(interface: String, port: Int = 80, backlog: Int = 100,
             options: immutable.Traversable[Inet.SocketOption] = Nil,
             settings: Option[ServerSettings] = None)(implicit system: ActorSystem, timeout: Timeout): Unit = {

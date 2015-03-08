@@ -19,5 +19,5 @@ object SimpleApp extends App {
 
   private val service = new MicroServiceSystem(List(new PingRes, new CheckNameRes) ++ new CouponOperationResource().resources())
 
-  service.start("localhost", port = 8080)
+  service.start()
 }
