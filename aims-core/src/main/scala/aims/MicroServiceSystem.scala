@@ -56,7 +56,7 @@ class MicroServiceSystem(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX) exte
     import system.dispatcher
     val serverSource = Http().bind(interface, port, backlog, options, settings)
     serverSource.to(Sink.foreach { connection ⇒
-      println("Accepted new connection from " + connection.remoteAddress)
+      logger.debug("Accepted new connection from " + connection.remoteAddress)
       connection handleWith bindingRoute
     }).run()
 
