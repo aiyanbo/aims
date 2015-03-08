@@ -13,7 +13,6 @@ import akka.io.Inet
 import akka.stream.ActorFlowMaterializer
 import akka.stream.scaladsl.Sink
 import akka.util.Timeout
-import com.typesafe.scalalogging.StrictLogging
 
 import scala.collection.immutable
 
@@ -23,7 +22,7 @@ import scala.collection.immutable
  * Date: 15/1/6
  * @author Andy Ai
  */
-class MicroServiceSystem(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX) extends StrictLogging {
+class MicroServiceSystem(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX) {
 
   def start()(implicit system: ActorSystem, timeout: Timeout): Unit = {
     val config = system.settings.config
@@ -56,7 +55,7 @@ class MicroServiceSystem(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX) exte
     import system.dispatcher
     val serverSource = Http().bind(interface, port, backlog, options, settings)
     serverSource.to(Sink.foreach { connection ⇒
-      logger.debug("Accepted new connection from " + connection.remoteAddress)
+      system.log.debug("Accepted new connection from " + connection.remoteAddress)
       connection handleWith bindingRoute
     }).run()
 
