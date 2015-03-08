@@ -1,17 +1,17 @@
 package aims
 
-import aims.core.RestRes
+import aims.core.Restlet
+import aims.cqrs.CQRS
+import aims.cqrs.CQRS.CQRS
 import aims.http.HttpServiceBinding
 import aims.marshalling.MarshallingActor
-import aims.model.CQRS
-import aims.model.CQRS.CQRS
 import akka.actor.{ ActorSystem, Props }
 import akka.http.Http
 import akka.http.engine.server.ServerSettings
 import akka.http.model.HttpMethods
 import akka.io.Inet
+import akka.stream.ActorFlowMaterializer
 import akka.stream.scaladsl.Sink
-import akka.stream.{ ActorFlowMaterializer, FlowMaterializer }
 import akka.util.Timeout
 import com.typesafe.scalalogging.StrictLogging
 
@@ -23,7 +23,7 @@ import scala.collection.immutable
  * Date: 15/1/6
  * @author Andy Ai
  */
-class MicroServiceSystem(resources: List[RestRes], cqrs: CQRS = CQRS.REMIX) extends StrictLogging {
+class MicroServiceSystem(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX) extends StrictLogging {
 
   def start()(implicit system: ActorSystem, timeout: Timeout): Unit = {
     val config = system.settings.config

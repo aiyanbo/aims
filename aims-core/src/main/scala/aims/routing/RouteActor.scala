@@ -1,8 +1,9 @@
 package aims.routing
 
-import aims.core.{ RestRes, RestResActor }
+import aims.core
+import aims.core.{ Restlet, RestletWrapActor }
 import aims.marshalling.MarshallingActor
-import aims.model.{ Event, Marshalling, RequestContext }
+import aims.model.{ Event, Marshalling }
 import akka.actor._
 import akka.http.model.HttpResponse
 import akka.http.model.StatusCodes._
@@ -16,14 +17,14 @@ import scala.collection.mutable
  * Date: 15/1/20
  * @author Andy Ai
  */
-private[aims] class RouteActor(res: List[RestRes]) extends Actor with ActorLogging with Directives {
+private[aims] class RouteActor(res: List[Restlet]) extends Actor with ActorLogging with Directives {
 
   private lazy val marshaller: ActorSelection = context.actorSelection("/user/" + MarshallingActor.name)
 
-  private lazy val actorPool: mutable.HashMap[RestRes, ActorRef] = mutable.HashMap[RestRes, ActorRef]()
+  private lazy val actorPool: mutable.HashMap[Restlet, ActorRef] = mutable.HashMap[Restlet, ActorRef]()
 
   override def receive: Receive = {
-    case ctx: RequestContext ⇒
+    case ctx: core.RequestContext ⇒
       val request = ctx.request
       val (path, method) = (request.uri.path, request.method)
       res map { r ⇒
@@ -40,7 +41,7 @@ private[aims] class RouteActor(res: List[RestRes]) extends Actor with ActorLoggi
           rs.find(r ⇒ r._2.method == method) match {
             case None ⇒ marshaller ! Marshalling(HttpResponse(MethodNotAllowed), request, sender())
             case Some(r) ⇒
-              val worker = actorPool.getOrElseUpdate(r._2, context.actorOf(RestResActor.props(r._2)))
+              val worker = actorPool.getOrElseUpdate(r._2, context.actorOf(RestletWrapActor.props(r._2)))
               worker ! Event(sender(), r._1.get, ctx.payload, request)
           }
       }
@@ -49,7 +50,7 @@ private[aims] class RouteActor(res: List[RestRes]) extends Actor with ActorLoggi
 }
 
 object RouteActor {
-  def props(res: List[RestRes]): Props = {
+  def props(res: List[Restlet]): Props = {
     Props(new RouteActor(res))
   }
 }

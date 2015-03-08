@@ -2,7 +2,6 @@ package aims
 
 import aims.res.{ CheckNameRes, PingRes }
 import akka.actor.ActorSystem
-import akka.stream.FlowMaterializer
 import akka.util.Timeout
 
 import scala.concurrent.duration._

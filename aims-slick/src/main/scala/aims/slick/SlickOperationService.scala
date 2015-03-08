@@ -5,7 +5,6 @@ import aims.cqrs.OperationService
 import aims.model.Event
 import akka.http.model.Uri.Query
 
-import scala.runtime.BoxedUnit
 import scala.slick.jdbc.JdbcBackend.{ DatabaseDef, SessionDef }
 
 /**

@@ -1,4 +1,4 @@
-package aims.model
+package aims.core
 
 import akka.http.model.HttpRequest
 

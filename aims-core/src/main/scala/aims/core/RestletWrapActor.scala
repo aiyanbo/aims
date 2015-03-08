@@ -1,8 +1,8 @@
 package aims.core
 
+import aims.core.RestletResult.{ Complete, Failure, Rejected, Success }
 import aims.marshalling.MarshallingActor
-import aims.model.HandleResult.{ Complete, Failure, Rejected, Success }
-import aims.model.{ Event, HandleResult, Marshalling }
+import aims.model.{ Event, Marshalling }
 import akka.actor.{ Actor, ActorSelection, Props }
 import akka.http.model._
 
@@ -12,7 +12,7 @@ import akka.http.model._
  * Date: 15/1/27
  * @author Andy Ai
  */
-class RestResActor(res: RestRes) extends Actor {
+class RestletWrapActor(res: Restlet) extends Actor {
   // have a better way?
   private lazy val marshaller: ActorSelection = context.actorSelection("/user/" + MarshallingActor.name)
 
@@ -33,14 +33,14 @@ class RestResActor(res: RestRes) extends Actor {
     }
   }
 
-  private def unhandle(event: Event): HandleResult = {
-    HandleResult.Complete(HttpResponse(StatusCodes.NotImplemented, entity = StatusCodes.NotImplemented.defaultMessage))
+  private def unhandle(event: Event): RestletResult = {
+    RestletResult.Complete(HttpResponse(StatusCodes.NotImplemented, entity = StatusCodes.NotImplemented.defaultMessage))
   }
 
 }
 
-object RestResActor {
-  def props(res: RestRes): Props = {
-    Props(new RestResActor(res))
+object RestletWrapActor {
+  def props(res: Restlet): Props = {
+    Props(new RestletWrapActor(res))
   }
 }

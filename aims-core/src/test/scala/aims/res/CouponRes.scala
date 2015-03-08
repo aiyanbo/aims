@@ -1,6 +1,6 @@
 package aims.res
 
-import aims.core.RestRes
+import aims.core.Restlet
 import aims.model.Event
 import aims.routing.PatternMatcher
 import akka.http.model.{ HttpMethod, HttpMethods }
@@ -11,7 +11,7 @@ import akka.http.model.{ HttpMethod, HttpMethods }
  * Date: 15/1/30
  * @author Andy Ai
  */
-class CouponRes extends RestRes {
+class CouponRes extends Restlet {
   override val method: HttpMethod = HttpMethods.GET
 
   override val pattern: PatternMatcher = PatternMatcher("/coupons/#couponId")

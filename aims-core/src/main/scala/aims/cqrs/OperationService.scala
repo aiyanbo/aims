@@ -1,8 +1,8 @@
 package aims.cqrs
 
-import aims.core.RestRes
+import aims.core.RestletResult._
+import aims.core.{ Restlet, RestletResult }
 import aims.model.Event
-import aims.model.HandleResult._
 import aims.routing.PatternMatcher
 import aims.util.Tuples
 import akka.http.model.HttpMethods._
@@ -22,10 +22,10 @@ abstract class OperationService[E] extends CommandService with QueryService[E] {
 
   def identity(event: Event): Any
 
-  def resources(): List[RestRes] = List(
+  def resources(): List[Restlet] = List(
     InsertOperation, DeleteOperation, UpdateOperation, ModifyOperation, FindOperation, ListOperation)
 
-  object InsertOperation extends RestRes {
+  object InsertOperation extends Restlet {
     override val pattern: PatternMatcher = basicPattern()
 
     override val method: HttpMethod = POST
@@ -36,7 +36,7 @@ abstract class OperationService[E] extends CommandService with QueryService[E] {
     }
   }
 
-  object DeleteOperation extends RestRes {
+  object DeleteOperation extends Restlet {
     override val pattern: PatternMatcher = basicPattern() / identityPattern()
 
     override val method: HttpMethod = DELETE
@@ -47,7 +47,7 @@ abstract class OperationService[E] extends CommandService with QueryService[E] {
     }
   }
 
-  object UpdateOperation extends RestRes {
+  object UpdateOperation extends Restlet {
     override val pattern: PatternMatcher = basicPattern() / identityPattern()
 
     override val method: HttpMethod = PUT
@@ -62,7 +62,7 @@ abstract class OperationService[E] extends CommandService with QueryService[E] {
     }
   }
 
-  object ModifyOperation extends RestRes {
+  object ModifyOperation extends Restlet {
     override val pattern: PatternMatcher = basicPattern() / identityPattern()
 
     override val method: HttpMethod = PATCH
@@ -77,7 +77,7 @@ abstract class OperationService[E] extends CommandService with QueryService[E] {
     }
   }
 
-  object FindOperation extends RestRes {
+  object FindOperation extends Restlet {
     override val pattern: PatternMatcher = basicPattern() / identityPattern()
 
     override val method: HttpMethod = GET
@@ -90,7 +90,7 @@ abstract class OperationService[E] extends CommandService with QueryService[E] {
     }
   }
 
-  object ListOperation extends RestRes {
+  object ListOperation extends Restlet {
     override val pattern: PatternMatcher = basicPattern()
 
     override val method: HttpMethod = GET

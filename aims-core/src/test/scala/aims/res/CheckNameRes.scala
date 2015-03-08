@@ -1,10 +1,9 @@
 package aims.res
 
-import aims.core.RestRes
+import aims.core.RestletResult._
+import aims.core.{ Restlet, RestletResult }
 import aims.model.Event
-import aims.model.HandleResult._
 import aims.routing.PatternMatcher
-import aims.routing.Patterns._
 import akka.http.model.{ HttpMethod, HttpMethods, HttpResponse, StatusCodes }
 
 /**
@@ -13,7 +12,7 @@ import akka.http.model.{ HttpMethod, HttpMethods, HttpResponse, StatusCodes }
  * Date: 15/1/29
  * @author Andy Ai
  */
-class CheckNameRes extends RestRes {
+class CheckNameRes extends Restlet {
   override val method: HttpMethod = HttpMethods.POST
 
   override val pattern: PatternMatcher = PatternMatcher("/check_name")

@@ -1,9 +1,8 @@
 package aims.res
 
-import aims.core.RestRes
-import aims.model.{ Event, HandleResult }
+import aims.core.{ Restlet, RestletResult }
+import aims.model.Event
 import aims.routing.PatternMatcher
-import aims.routing.Patterns._
 import akka.http.model.{ HttpMethod, HttpMethods, HttpResponse }
 
 /**
@@ -12,7 +11,7 @@ import akka.http.model.{ HttpMethod, HttpMethods, HttpResponse }
  * Date: 15/1/27
  * @author Andy Ai
  */
-class PingRes extends RestRes {
+class PingRes extends Restlet {
 
   override val method: HttpMethod = HttpMethods.GET
 
@@ -24,7 +23,7 @@ class PingRes extends RestRes {
       event.request.uri.query.get("e") match {
         case Some(v) ⇒ throw new IllegalArgumentException
         case None ⇒
-          HandleResult.Complete(HttpResponse(entity = "ping"))
+          RestletResult.Complete(HttpResponse(entity = "ping"))
       }
   }
 

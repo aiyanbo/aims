@@ -3,8 +3,8 @@ package aims
 import aims.core.Pagination
 import aims.cqrs.OperationService
 import aims.model.Event
-import aims.routing.PatternMatcher._
 import aims.routing.PatternMatcher
+import aims.routing.PatternMatcher._
 import aims.util.Tuples
 
 /**

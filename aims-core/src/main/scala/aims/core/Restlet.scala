@@ -1,6 +1,6 @@
 package aims.core
 
-import aims.model.{ Event, HandleResult }
+import aims.model.Event
 import aims.routing.PatternMatcher
 import akka.http.model.{ HttpMethod, MediaType, MediaTypes }
 
@@ -10,8 +10,8 @@ import akka.http.model.{ HttpMethod, MediaType, MediaTypes }
  * Date: 15/1/22
  * @author Andy Ai
  */
-trait RestRes {
-  type Handle = RestRes.Handler
+trait Restlet {
+  type Handle = Restlet.Handler
 
   val method: HttpMethod
 
@@ -23,8 +23,8 @@ trait RestRes {
 
 }
 
-object RestRes {
+object Restlet {
 
-  type Handler = PartialFunction[Event, HandleResult]
+  type Handler = PartialFunction[Event, RestletResult]
 
 }

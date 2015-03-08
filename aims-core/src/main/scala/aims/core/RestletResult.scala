@@ -1,4 +1,4 @@
-package aims.model
+package aims.core
 
 import akka.http.model.HttpResponse
 import akka.http.server.Rejection
@@ -12,17 +12,17 @@ import scala.language.implicitConversions
  * Date: 15/1/28
  * @author Andy Ai
  */
-sealed trait HandleResult
+sealed trait RestletResult
 
-object HandleResult {
+object RestletResult {
 
-  final case class Success(result: Any) extends HandleResult
+  final case class Success(result: Any) extends RestletResult
 
-  final case class Complete(response: HttpResponse) extends HandleResult
+  final case class Complete(response: HttpResponse) extends RestletResult
 
-  final case class Failure(causes: immutable.Seq[Throwable]) extends HandleResult
+  final case class Failure(causes: immutable.Seq[Throwable]) extends RestletResult
 
-  final case class Rejected(rejections: immutable.Seq[Rejection]) extends HandleResult
+  final case class Rejected(rejections: immutable.Seq[Rejection]) extends RestletResult
 
   implicit def success(result: Any): Success = {
     Success(result)

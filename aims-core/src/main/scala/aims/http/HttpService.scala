@@ -1,15 +1,13 @@
 package aims.http
 
-import aims.core.RestRes
-import aims.model.RequestContext
+import aims.core.{ RequestContext, Restlet }
 import aims.routing.RouteActor
 import akka.actor.ActorSystem
 import akka.http.model.headers._
 import akka.http.model.{ HttpResponse, StatusCodes }
-import akka.http.server.{ directives, Directives }
-
+import akka.http.server.Directives
 import akka.pattern.ask
-import akka.stream.{ ActorFlowMaterializer, FlowMaterializer }
+import akka.stream.ActorFlowMaterializer
 import akka.util.Timeout
 
 import scala.concurrent.Future
@@ -24,7 +22,7 @@ import scala.util.Failure
  */
 trait HttpService extends Directives {
   implicit val system: ActorSystem
-  implicit val handlers: List[RestRes]
+  implicit val handlers: List[Restlet]
   implicit val materializer: ActorFlowMaterializer
 
   val timeout: Timeout
@@ -82,6 +80,6 @@ trait HttpService extends Directives {
 class HttpServiceBinding(
   val system: ActorSystem,
   val materializer: ActorFlowMaterializer,
-  val handlers: List[RestRes],
+  val handlers: List[Restlet],
   val timeout: Timeout = 5.seconds,
   val forcedContentLengthHeader: Boolean = false) extends HttpService

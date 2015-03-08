@@ -12,7 +12,6 @@ import akka.http.model.{ HttpEntity, HttpRequest, HttpResponse }
 
 import scala.collection.immutable
 import scala.runtime.BoxedUnit
-import scala.util.Try
 
 /**
  * Component:

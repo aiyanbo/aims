@@ -1,4 +1,4 @@
-package aims.model
+package aims.cqrs
 
 /**
  * Component:
