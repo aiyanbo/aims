@@ -35,11 +35,11 @@ class MarshallingActor extends Actor with ActorLogging {
   }
 
   private def marshalThrowable(throwable: Throwable) = {
-    log.error(throwable, "handle has exception")
     val message = throwable.getMessage match {
       case m: String ⇒ m
       case _         ⇒ throwable.toString
     }
+    log.error(throwable, message)
     throwable match {
       case runtime: RuntimeException ⇒ HttpResponse(BadRequest, entity = message)
       case err                       ⇒ HttpResponse(InternalServerError, entity = message)
