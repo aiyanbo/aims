@@ -42,36 +42,10 @@ object TestServer extends App {
     }
   }
 
-  val uploadRoute = {
-    path("upload") {
-      post {
-        entity(as[FormData]) {
-          formData ⇒
-            formData.parts.runForeach({ bodyPart ⇒
-              try {
-                val outputStream = new FileOutputStream("/Users/aiyanbo/" + bodyPart.filename.get)
-                bodyPart.entity.dataBytes.runForeach({
-                  byteString ⇒
-                    val bytes: Array[Byte] = byteString.toByteBuffer.array()
-                    println("write length: " + bytes.length)
-                    outputStream.write(bytes)
-                }).onComplete({ u ⇒ outputStream.close() })
-                //                outputStream.flush()
-                //                outputStream.close()
-              } catch {
-                case e: Throwable ⇒ e.printStackTrace()
-              }
-            })
-            complete("yes")
-        }
-      }
-    }
-  }
-
   val serverSource = Http().bind(interface = "localhost", port = 8080)
   val bindingFuture = serverSource.to(Sink.foreach { connection ⇒
     println("Accepted new connection from " + connection.remoteAddress)
-    connection handleWith uploadRoute
+    connection handleWith route
   }).run()
   println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
   scala.io.StdIn.readLine()
