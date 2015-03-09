@@ -46,11 +46,11 @@ class MicroServiceSystem(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX) {
     })
 
     val httpServiceBinding = new HttpServiceBinding(system, materializer, cqrsResources)
-    val bindingRoute = cqrs match {
+    val bindingRoute = httpServiceBinding.enabledMetrics(cqrs match {
       case CQRS.QUERY   ⇒ httpServiceBinding.queryRoute
       case CQRS.COMMAND ⇒ httpServiceBinding.commandRoute
       case CQRS.REMIX   ⇒ httpServiceBinding.remixRoute
-    }
+    })
 
     import system.dispatcher
     val serverSource = Http().bind(interface, port, backlog, options, settings)
