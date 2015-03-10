@@ -9,4 +9,4 @@ import akka.http.model.Multipart.FormData
  * Date: 15/1/26
  * @author Andy Ai
  */
-case class RequestContext(request: HttpRequest, payload: Option[String], formData: Option[FormData])
+case class RequestContext(request: HttpRequest, payload: Option[String], formData: Option[FormData] = None)

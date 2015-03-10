@@ -1,5 +1,7 @@
 package aims.core
 
+import java.io.File
+
 import akka.http.model.HttpResponse
 import akka.http.server.Rejection
 
@@ -18,6 +20,8 @@ object RestletResult {
 
   final case class Success(result: Any) extends RestletResult
 
+  final case class FromFile(file: File) extends RestletResult
+
   final case class Complete(response: HttpResponse) extends RestletResult
 
   final case class Failure(causes: immutable.Seq[Throwable]) extends RestletResult
@@ -26,6 +30,10 @@ object RestletResult {
 
   implicit def success(result: Any): Success = {
     Success(result)
+  }
+
+  implicit def fromFile(file: File): FromFile = {
+    FromFile(file)
   }
 
   implicit def complete(response: HttpResponse): Complete = {

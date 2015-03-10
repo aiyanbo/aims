@@ -17,7 +17,7 @@ class CouponRes extends Restlet {
   override val pattern: PatternMatcher = PatternMatcher("/coupons/#couponId")
 
   override def handle: Handle = {
-    case Event(_, extractions, _, _) ⇒
+    case Event(_, extractions, _, _, _) ⇒
       s"you get the coupon by id: ${extractions.asInstanceOf[Tuple1[String]]._1}"
   }
 }

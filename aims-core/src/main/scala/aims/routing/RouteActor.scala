@@ -42,7 +42,7 @@ private[aims] class RouteActor(res: List[Restlet]) extends Actor with ActorLoggi
             case None ⇒ marshaller ! Marshalling(HttpResponse(MethodNotAllowed), request, sender())
             case Some(r) ⇒
               val worker = actorPool.getOrElseUpdate(r._2, context.actorOf(RestletWrapActor.props(r._2)))
-              worker ! Event(sender(), r._1.get, ctx.payload, request)
+              worker ! Event(sender(), r._1.get, ctx.payload, ctx.formData, request)
           }
       }
   }

@@ -1,5 +1,7 @@
 package aims.marshalling
 
+import java.io.File
+
 import aims.core.Pagination
 import aims.core.model.headers.XTotalCount
 import aims.json.Jackson
@@ -22,6 +24,7 @@ import scala.runtime.BoxedUnit
 class MarshallingActor extends Actor with ActorLogging {
   override def receive: Receive = {
     case Marshalling(response: HttpResponse, _, responder)          ⇒ responder ! response
+    case Marshalling(file: File, _, responder)                      ⇒ responder ! file
     case Marshalling(unit: BoxedUnit, _, responder)                 ⇒ responder ! HttpResponse(OK)
     case Marshalling(str: String, _, responder)                     ⇒ responder ! HttpResponse(OK, entity = str)
     case Marshalling(number: Number, _, responder)                  ⇒ responder ! HttpResponse(OK, entity = number.toString)

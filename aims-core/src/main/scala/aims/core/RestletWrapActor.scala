@@ -1,10 +1,11 @@
 package aims.core
 
-import aims.core.RestletResult.{ Complete, Failure, Rejected, Success }
+import aims.core.RestletResult._
 import aims.marshalling.MarshallingActor
 import aims.model.{ Event, Marshalling }
 import akka.actor.{ Actor, ActorSelection, Props }
 import akka.http.model._
+import akka.stream.ActorFlowMaterializer
 
 /**
  * Component:
@@ -23,6 +24,7 @@ class RestletWrapActor(res: Restlet) extends Actor {
   private def execute(event: Event) = {
     try {
       res.handle.applyOrElse(event, unhandle) match {
+        case FromFile(file)       ⇒ file
         case Complete(response)   ⇒ response
         case Success(result)      ⇒ result
         case Rejected(rejections) ⇒ rejections

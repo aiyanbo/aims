@@ -1,5 +1,7 @@
 package aims.http
 
+import java.io.File
+
 import aims.core.{ RequestContext, Restlet }
 import aims.routing.RouteActor
 import akka.actor.ActorSystem
@@ -11,7 +13,7 @@ import akka.pattern.ask
 import akka.stream.ActorFlowMaterializer
 import akka.util.Timeout
 
-import scala.concurrent.Future
+import scala.concurrent.{ Await, Future }
 import scala.concurrent.duration._
 import scala.util.Failure
 
@@ -45,12 +47,17 @@ trait HttpService extends Directives {
 
   def queryRoute = {
     path("attachments" / Rest) { rest ⇒
-      extractRequestContext { ctx ⇒
-        complete(dispatchRequest(ctx, None, None))
+      get {
+        extractRequestContext { ctx ⇒
+          val file: File = Await.result(router.ask(RequestContext(ctx.request, None))(timeout).map(_.asInstanceOf[File]), timeout.duration)
+          respondWithHeader(`Content-Disposition`.apply(ContentDispositionTypes.attachment, Map("filename" -> file.getName))) {
+            getFromFile(file)
+          }
+        }
       }
     } ~ get {
       extractRequestContext { ctx ⇒
-        complete(dispatchRequest(ctx, None, None))
+        complete(dispatchRequest(ctx))
       }
     }
   }
@@ -58,13 +65,13 @@ trait HttpService extends Directives {
   def commandRoute = {
     delete {
       extractRequestContext { ctx ⇒
-        complete(dispatchRequest(ctx, None, None))
+        complete(dispatchRequest(ctx))
       }
     } ~ path("attachments" / Rest) { rest ⇒
       post {
         extractRequestContext { ctx ⇒
           entity(as[FormData]) { formData ⇒
-            complete(dispatchRequest(ctx, None, Some(formData)))
+            complete(dispatchRequest(ctx, formData = Some(formData)))
           }
         }
       }
@@ -74,14 +81,14 @@ trait HttpService extends Directives {
           optionalHeaderValueByName(`Content-Length`.name) {
             case Some(contentLength) if contentLength.toLong > 0 ⇒
               entity(as[Option[String]]) { payload ⇒
-                complete(dispatchRequest(ctx, payload, None))
+                complete(dispatchRequest(ctx, payload))
               }
             case _ ⇒
-              complete(dispatchRequest(ctx, None, None))
+              complete(dispatchRequest(ctx))
           }
         } else {
           entity(as[Option[String]]) { payload ⇒
-            complete(dispatchRequest(ctx, payload, None))
+            complete(dispatchRequest(ctx, payload))
           }
         }
       }
@@ -89,7 +96,7 @@ trait HttpService extends Directives {
     }
   }
 
-  private def dispatchRequest(ctx: akka.http.server.RequestContext, payload: Option[String], formData: Option[FormData]): Future[HttpResponse] = {
+  private def dispatchRequest(ctx: akka.http.server.RequestContext, payload: Option[String] = None, formData: Option[FormData] = None): Future[HttpResponse] = {
     router.ask(RequestContext(ctx.request, payload, formData))(timeout).collect {
       case response: HttpResponse ⇒ response
       case Failure(exception)     ⇒ HttpResponse(StatusCodes.InternalServerError)

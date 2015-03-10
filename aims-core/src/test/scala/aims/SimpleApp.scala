@@ -1,7 +1,8 @@
 package aims
 
-import aims.res.{ CheckNameRes, PingRes }
+import aims.res.{ FileUploadRes, FileDownloadRes, CheckNameRes, PingRes }
 import akka.actor.ActorSystem
+import akka.stream.ActorFlowMaterializer
 import akka.util.Timeout
 
 import scala.concurrent.duration._
@@ -15,8 +16,9 @@ import scala.concurrent.duration._
 object SimpleApp extends App {
   implicit val system = ActorSystem("aims")
   implicit val timeout: Timeout = 5000.millis
+  implicit val materializer = ActorFlowMaterializer()
 
-  private val service = new MicroServiceSystem(List(new PingRes, new CheckNameRes) ++ new CouponOperationResource().resources())
+  private val service = MicroServiceSystem.create(List(new PingRes, new CheckNameRes, new FileDownloadRes, new FileUploadRes) ++ new CouponOperationResource().resources())
 
   service.start()
 }

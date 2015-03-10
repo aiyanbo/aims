@@ -22,20 +22,18 @@ import scala.collection.immutable
  * Date: 15/1/6
  * @author Andy Ai
  */
-class MicroServiceSystem(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX) {
+private[aims] class MicroServiceSystem(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX)(implicit system: ActorSystem, materializer: ActorFlowMaterializer, timeout: Timeout) {
 
-  def start()(implicit system: ActorSystem, timeout: Timeout): Unit = {
+  def start(): Unit = {
     val config = system.settings.config
     start(interface = config.getString("aims.host"), port = config.getInt("aims.port"))
   }
 
   def start(interface: String, port: Int = 80, backlog: Int = 100,
             options: immutable.Traversable[Inet.SocketOption] = Nil,
-            settings: Option[ServerSettings] = None)(implicit system: ActorSystem, timeout: Timeout): Unit = {
+            settings: Option[ServerSettings] = None): Unit = {
     //crate marshall actor
     system.actorOf(Props[MarshallingActor], MarshallingActor.name)
-
-    implicit val materializer = ActorFlowMaterializer()
 
     val cqrsResources = resources.filter(r ⇒ {
       cqrs match {
@@ -61,4 +59,10 @@ class MicroServiceSystem(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX) {
 
   }
 
+}
+
+object MicroServiceSystem {
+  def create(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX)(implicit system: ActorSystem, materializer: ActorFlowMaterializer, timeout: Timeout): MicroServiceSystem = {
+    new MicroServiceSystem(resources, cqrs)(system, materializer, timeout)
+  }
 }
