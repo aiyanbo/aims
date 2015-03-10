@@ -22,7 +22,7 @@ import scala.collection.immutable
  * Date: 15/1/6
  * @author Andy Ai
  */
-private[aims] class MicroServiceSystem(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX)(implicit system: ActorSystem, materializer: ActorFlowMaterializer, timeout: Timeout) {
+abstract class MicroServiceSystem(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX)(implicit system: ActorSystem, materializer: ActorFlowMaterializer, timeout: Timeout) {
 
   def start(): Unit = {
     val config = system.settings.config
@@ -61,8 +61,10 @@ private[aims] class MicroServiceSystem(resources: List[Restlet], cqrs: CQRS = CQ
 
 }
 
+private[aims] class MicroServiceSystemImpl(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX)(implicit system: ActorSystem, materializer: ActorFlowMaterializer, timeout: Timeout) extends MicroServiceSystem(resources, cqrs)(system, materializer, timeout)
+
 object MicroServiceSystem {
   def create(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX)(implicit system: ActorSystem, materializer: ActorFlowMaterializer, timeout: Timeout): MicroServiceSystem = {
-    new MicroServiceSystem(resources, cqrs)(system, materializer, timeout)
+    new MicroServiceSystemImpl(resources, cqrs)(system, materializer, timeout)
   }
 }
