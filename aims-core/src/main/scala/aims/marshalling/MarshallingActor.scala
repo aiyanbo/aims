@@ -51,21 +51,22 @@ class MarshallingActor extends Actor with ActorLogging {
 
   private def marshalPagination(pagination: Pagination[_], request: HttpRequest): HttpResponse = {
     if (pagination.items.isEmpty) {
-      return HttpResponse(entity = HttpEntity(`application/json`, "[]"))
-    }
-    pagination.links.filter {
-      case LinkParams.next  ⇒ pagination.page < pagination.totalPage
-      case LinkParams.prev  ⇒ pagination.page - 1 > 1
-      case LinkParams.first ⇒ pagination.page > 1
-      case LinkParams.last  ⇒ pagination.page < pagination.totalPage
-    }.map {
-      case LinkParams.next  ⇒ LinkValue(request.uri.withQuery(request.uri.query.+:("page", (pagination.page + 1).toString)), LinkParams.next)
-      case LinkParams.prev  ⇒ LinkValue(request.uri.withQuery(request.uri.query.+:("page", (pagination.page - 1).toString)), LinkParams.prev)
-      case LinkParams.first ⇒ LinkValue(request.uri.withQuery(request.uri.query.+:("page", 1.toString)), LinkParams.first)
-      case LinkParams.last  ⇒ LinkValue(request.uri.withQuery(request.uri.query.+:("page", pagination.totalPage.toString)), LinkParams.last)
-    } match {
-      case Nil   ⇒ HttpResponse(status = OK, headers = immutable.Seq(XTotalCount(pagination.totalCount)), entity = HttpEntity(`application/json`, Jackson.mapper.writeValueAsString(pagination.items)))
-      case links ⇒ HttpResponse(status = OK, headers = immutable.Seq(Link(links: _*), XTotalCount(pagination.totalCount)), entity = HttpEntity(`application/json`, Jackson.mapper.writeValueAsString(pagination.items)))
+      HttpResponse(entity = HttpEntity(`application/json`, "[]"))
+    } else {
+      pagination.links.filter {
+        case LinkParams.next  ⇒ pagination.page < pagination.totalPage
+        case LinkParams.prev  ⇒ pagination.page - 1 > 1
+        case LinkParams.first ⇒ pagination.page > 1
+        case LinkParams.last  ⇒ pagination.page < pagination.totalPage
+      }.map {
+        case LinkParams.next  ⇒ LinkValue(request.uri.withQuery(request.uri.query.+:("page", (pagination.page + 1).toString)), LinkParams.next)
+        case LinkParams.prev  ⇒ LinkValue(request.uri.withQuery(request.uri.query.+:("page", (pagination.page - 1).toString)), LinkParams.prev)
+        case LinkParams.first ⇒ LinkValue(request.uri.withQuery(request.uri.query.+:("page", 1.toString)), LinkParams.first)
+        case LinkParams.last  ⇒ LinkValue(request.uri.withQuery(request.uri.query.+:("page", pagination.totalPage.toString)), LinkParams.last)
+      } match {
+        case Nil   ⇒ HttpResponse(status = OK, headers = immutable.Seq(XTotalCount(pagination.totalCount)), entity = HttpEntity(`application/json`, Jackson.mapper.writeValueAsString(pagination.items)))
+        case links ⇒ HttpResponse(status = OK, headers = immutable.Seq(Link(links: _*), XTotalCount(pagination.totalCount)), entity = HttpEntity(`application/json`, Jackson.mapper.writeValueAsString(pagination.items)))
+      }
     }
   }
 }

@@ -16,7 +16,7 @@ object Pagination {
   lazy val multiPage: Seq[rel] = Seq(LinkParams.first, LinkParams.prev, LinkParams.next, LinkParams.last)
   lazy val pagerAlternative = Seq(LinkParams.prev, LinkParams.next)
 
-  def empty[E] = Pagination[E](Nil, 0, 0, 0, Nil)
+  def empty[E]: Pagination[E] = Pagination[E](Nil, 0, 0, 0, Nil)
 
   def totalPage(totalCount: Int, perPage: Int): Int = {
     (totalCount + perPage - 1) / perPage
@@ -30,4 +30,3 @@ object Page {
     Page(query.getOrElse("page", "1").toInt, query.getOrElse("per_page", "100").toInt)
   }
 }
-

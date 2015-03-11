@@ -12,7 +12,7 @@ import akka.actor.{ ActorSystem, Props }
 class Marshaller(system: ActorSystem) {
   private val actor = system.actorOf(Props[MarshallingActor], MarshallingActor.name)
 
-  def marshal(marshalling: Marshalling) = {
+  def marshal(marshalling: Marshalling): Unit = {
     actor ! marshalling
   }
 }

@@ -35,17 +35,17 @@ trait HttpService extends Directives {
 
   private val router = system.actorOf(RouteActor.props(handlers))
 
-  def enabledMetrics(route: Route) = metricsRoute ~ route
+  def enabledMetrics(route: Route): Route = metricsRoute ~ route
 
-  def remixRoute = queryRoute ~ commandRoute
+  def remixRoute: Route = queryRoute ~ commandRoute
 
-  def metricsRoute = path("metrics" / Rest) { rest ⇒
+  def metricsRoute: Route = path("metrics" / Rest) { rest ⇒
     get {
       complete("not support yet!")
     }
   }
 
-  def queryRoute = {
+  def queryRoute: Route = {
     path("attachments" / Rest) { rest ⇒
       get {
         extractRequestContext { ctx ⇒
@@ -62,7 +62,7 @@ trait HttpService extends Directives {
     }
   }
 
-  def commandRoute = {
+  def commandRoute: Route = {
     delete {
       extractRequestContext { ctx ⇒
         complete(dispatchRequest(ctx))
