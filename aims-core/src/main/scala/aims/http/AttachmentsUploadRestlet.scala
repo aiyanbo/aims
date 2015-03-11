@@ -3,9 +3,9 @@ package aims.http
 import aims.core.Restlet
 import aims.model.Event
 import aims.routing.PatternMatcher
+import aims.routing.PatternMatcher._
 import akka.http.model.HttpMethod
 import akka.http.model.HttpMethods._
-import akka.stream.ActorFlowMaterializer
 
 /**
  * Component:
@@ -15,15 +15,15 @@ import akka.stream.ActorFlowMaterializer
  */
 trait AttachmentsUploadRestlet extends Restlet {
 
-  implicit val materializer: ActorFlowMaterializer
-
-  val root: PatternMatcher = "/attachments"
-
   override val method: HttpMethod = POST
+
+  override val pattern: PatternMatcher = "/attachments" / attachmentsPattern()
 
   override def handle: Handle = {
     case event: Event ⇒ saveAttachments(event)
   }
+
+  def attachmentsPattern(): PatternMatcher
 
   def saveAttachments(event: Event): Unit
 }

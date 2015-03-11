@@ -15,6 +15,9 @@ import com.google.common.base.Charsets
  * @author Andy Ai
  */
 class FileDownloadRes extends AttachmentsDownloadRestlet {
+
+  override def attachmentsPattern(): PatternMatcher = "files"
+
   override def fromFile(event: Event): File = {
     val file = Files.createTempFile("file_test", ".txt").toFile
     val outputStream = new FileOutputStream(file)
@@ -22,5 +25,4 @@ class FileDownloadRes extends AttachmentsDownloadRestlet {
     file
   }
 
-  override val pattern: PatternMatcher = root / "files"
 }

@@ -19,7 +19,7 @@ class FileUploadRes(implicit val materializer: ActorFlowMaterializer, implicit v
 
   import system.dispatcher
 
-  override val pattern: PatternMatcher = root / "files"
+  override def attachmentsPattern(): PatternMatcher = "files"
 
   override def saveAttachments(event: Event): Unit = {
     event.formData.get.parts.runForeach({ bodyPart ⇒
