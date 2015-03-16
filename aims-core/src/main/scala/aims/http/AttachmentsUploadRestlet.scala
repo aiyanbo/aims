@@ -1,6 +1,6 @@
 package aims.http
 
-import aims.core.Restlet
+import aims.core.{ RestletResult, Restlet }
 import aims.model.Event
 import aims.routing.PatternMatcher
 import aims.routing.PatternMatcher._
@@ -25,5 +25,5 @@ trait AttachmentsUploadRestlet extends Restlet {
 
   def attachmentsPattern(): PatternMatcher
 
-  def saveAttachments(event: Event): Unit
+  def saveAttachments(event: Event): RestletResult
 }

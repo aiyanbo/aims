@@ -2,6 +2,7 @@ package aims.res
 
 import java.io.{ FileOutputStream, File }
 
+import aims.core.RestletResult
 import aims.http.AttachmentsUploadRestlet
 import aims.model.Event
 import aims.routing.PatternMatcher
@@ -21,7 +22,7 @@ class FileUploadRes(implicit val materializer: ActorFlowMaterializer, implicit v
 
   override def attachmentsPattern(): PatternMatcher = "files"
 
-  override def saveAttachments(event: Event): Unit = {
+  override def saveAttachments(event: Event): RestletResult = {
     event.formData.get.parts.runForeach({ bodyPart ⇒
       try {
         val file = File.createTempFile("upload_test", bodyPart.filename.get)
