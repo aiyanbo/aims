@@ -22,7 +22,7 @@ import scala.collection.immutable
  * Date: 15/1/6
  * @author Andy Ai
  */
-abstract class MicroServiceSystem(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX)(implicit system: ActorSystem, materializer: ActorFlowMaterializer, timeout: Timeout) {
+abstract class MicroServiceSystem(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX, forcedContentLengthHeader: Boolean = false)(implicit system: ActorSystem, materializer: ActorFlowMaterializer, timeout: Timeout) {
 
   def start(): Unit = {
     val config = system.settings.config
@@ -43,7 +43,7 @@ abstract class MicroServiceSystem(resources: List[Restlet], cqrs: CQRS = CQRS.RE
       }
     })
 
-    val httpServiceBinding = new HttpServiceBinding(system, materializer, cqrsResources)
+    val httpServiceBinding = new HttpServiceBinding(system, materializer, cqrsResources, timeout, forcedContentLengthHeader)
     val bindingRoute = httpServiceBinding.enabledMetrics(cqrs match {
       case CQRS.QUERY   ⇒ httpServiceBinding.queryRoute
       case CQRS.COMMAND ⇒ httpServiceBinding.commandRoute
@@ -61,10 +61,10 @@ abstract class MicroServiceSystem(resources: List[Restlet], cqrs: CQRS = CQRS.RE
 
 }
 
-private[aims] class MicroServiceSystemImpl(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX)(implicit system: ActorSystem, materializer: ActorFlowMaterializer, timeout: Timeout) extends MicroServiceSystem(resources, cqrs)(system, materializer, timeout)
+private[aims] class MicroServiceSystemImpl(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX, forcedContentLengthHeader: Boolean = false)(implicit system: ActorSystem, materializer: ActorFlowMaterializer, timeout: Timeout) extends MicroServiceSystem(resources, cqrs, forcedContentLengthHeader)(system, materializer, timeout)
 
 object MicroServiceSystem {
-  def create(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX)(implicit system: ActorSystem, materializer: ActorFlowMaterializer, timeout: Timeout): MicroServiceSystem = {
-    new MicroServiceSystemImpl(resources, cqrs)(system, materializer, timeout)
+  def create(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX, forcedContentLengthHeader: Boolean = false)(implicit system: ActorSystem, materializer: ActorFlowMaterializer, timeout: Timeout): MicroServiceSystem = {
+    new MicroServiceSystemImpl(resources, cqrs, forcedContentLengthHeader)(system, materializer, timeout)
   }
 }
