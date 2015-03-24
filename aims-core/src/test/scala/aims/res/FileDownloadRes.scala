@@ -19,7 +19,7 @@ class FileDownloadRes extends AttachmentsDownloadRestlet {
   override def attachmentsPattern(): PatternMatcher = "files"
 
   override def fromFile(event: Event): File = {
-    val file = Files.createTempFile("file_test", ".txt").toFile
+    val file = Files.createTempFile("我的中国心", ".txt").toFile
     val outputStream = new FileOutputStream(file)
     outputStream.write("download file test".getBytes(Charsets.UTF_8))
     file

@@ -1,6 +1,7 @@
 package aims.http
 
 import java.io.File
+import java.net.URLEncoder
 
 import aims.core.{ RequestContext, Restlet }
 import aims.routing.RouteActor
@@ -8,13 +9,14 @@ import akka.actor.ActorSystem
 import akka.http.model.Multipart.FormData
 import akka.http.model.headers._
 import akka.http.model.{ HttpResponse, StatusCodes }
-import akka.http.server.{ Route, Directives }
+import akka.http.server.{ Directives, Route }
 import akka.pattern.ask
 import akka.stream.ActorFlowMaterializer
 import akka.util.Timeout
+import com.google.common.base.Charsets
 
-import scala.concurrent.{ Await, Future }
 import scala.concurrent.duration._
+import scala.concurrent.{ Await, Future }
 import scala.util.Failure
 
 /**
@@ -50,7 +52,9 @@ trait HttpService extends Directives {
       get {
         extractRequestContext { ctx ⇒
           val file: File = Await.result(router.ask(RequestContext(ctx.request, None))(timeout).map(_.asInstanceOf[File]), timeout.duration)
-          respondWithHeader(`Content-Disposition`.apply(ContentDispositionTypes.attachment, Map("filename" -> file.getName))) {
+          respondWithHeader(`Content-Disposition`.apply(
+            ContentDispositionTypes.attachment,
+            Map("filename" -> URLEncoder.encode(file.getName, Charsets.UTF_8.displayName())))) {
             getFromFile(file)
           }
         }
