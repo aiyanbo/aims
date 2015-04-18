@@ -4,7 +4,7 @@ Aims
 
 Microservices Framework Based on Akka HTTP
 
-# WIKI
+# Wiki
 
 https://github.com/aiyanbo/aims/wiki
 
