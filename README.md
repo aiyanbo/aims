@@ -4,6 +4,10 @@ Aims
 
 Microservices Framework Based on Akka HTTP
 
+# WIKI
+
+https://github.com/aiyanbo/aims/wiki
+
 # TODO
 
 - Cluster: register service to microservices management.
