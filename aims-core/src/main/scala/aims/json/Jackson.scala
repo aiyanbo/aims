@@ -20,6 +20,6 @@ object Jackson {
   mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
   mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
   mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES)
-  mapper.setDateFormat(new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ssZ"))
+  mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"))
   mapper.registerModule(DefaultScalaModule)
 }
