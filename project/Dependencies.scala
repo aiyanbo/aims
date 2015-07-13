@@ -9,9 +9,9 @@ object Dependencies {
     val log4j2 = "2.1"
     val guava = "18.0"
     val slick = "2.1.0"
-    val scala = "2.11.6"
+    val scala = "2.11.7"
     val jackson = "2.5.1"
-    val akkaHttp = "1.0-M4"
+    val akkaHttp = "1.0-RC4"
     val scalaTest = "2.2.2"
     val scalaLogging = "3.1.0"
   }
