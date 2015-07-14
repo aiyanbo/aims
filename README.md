@@ -1,6 +1,6 @@
 Aims
 ====
-[![Build Status](https://travis-ci.org/aiyanbo/aims.svg?branch=master)](https://travis-ci.org/aiyanbo/aims)
+[![Build Status](https://travis-ci.org/aiyanbo/aims.svg?branch=akka-http-1.0-RC4)](https://travis-ci.org/aiyanbo/aims)
 
 Microservices Framework Based on Akka HTTP
 
