@@ -2,8 +2,8 @@ package aims.core
 
 import java.io.File
 
-import akka.http.model.HttpResponse
-import akka.http.server.Rejection
+import akka.http.scaladsl.model.HttpResponse
+import akka.http.scaladsl.server.Rejection
 
 import scala.collection.immutable
 import scala.language.implicitConversions

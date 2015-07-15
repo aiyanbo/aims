@@ -6,11 +6,11 @@ import aims.cqrs.CQRS.CQRS
 import aims.http.HttpServiceBinding
 import aims.marshalling.MarshallingActor
 import akka.actor.{ ActorSystem, Props }
-import akka.http.Http
-import akka.http.engine.server.ServerSettings
-import akka.http.model.HttpMethods
+import akka.http.ServerSettings
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.HttpMethods
 import akka.io.Inet
-import akka.stream.ActorFlowMaterializer
+import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Sink
 import akka.util.Timeout
 
@@ -22,7 +22,7 @@ import scala.collection.immutable
  * Date: 15/1/6
  * @author Andy Ai
  */
-abstract class MicroServiceSystem(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX, forcedContentLengthHeader: Boolean = false)(implicit system: ActorSystem, materializer: ActorFlowMaterializer, timeout: Timeout) {
+abstract class MicroServiceSystem(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX, forcedContentLengthHeader: Boolean = false)(implicit system: ActorSystem, materializer: ActorMaterializer, timeout: Timeout) {
 
   def start(): Unit = {
     val config = system.settings.config
@@ -51,7 +51,7 @@ abstract class MicroServiceSystem(resources: List[Restlet], cqrs: CQRS = CQRS.RE
     })
 
     import system.dispatcher
-    val serverSource = Http().bind(interface, port, backlog, options, settings)
+    val serverSource = Http().bind(interface, port)
     serverSource.to(Sink.foreach { connection ⇒
       system.log.debug("Accepted new connection from " + connection.remoteAddress)
       connection handleWith bindingRoute
@@ -61,10 +61,10 @@ abstract class MicroServiceSystem(resources: List[Restlet], cqrs: CQRS = CQRS.RE
 
 }
 
-private[aims] class MicroServiceSystemImpl(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX, forcedContentLengthHeader: Boolean = false)(implicit system: ActorSystem, materializer: ActorFlowMaterializer, timeout: Timeout) extends MicroServiceSystem(resources, cqrs, forcedContentLengthHeader)(system, materializer, timeout)
+private[aims] class MicroServiceSystemImpl(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX, forcedContentLengthHeader: Boolean = false)(implicit system: ActorSystem, materializer: ActorMaterializer, timeout: Timeout) extends MicroServiceSystem(resources, cqrs, forcedContentLengthHeader)(system, materializer, timeout)
 
 object MicroServiceSystem {
-  def create(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX, forcedContentLengthHeader: Boolean = false)(implicit system: ActorSystem, materializer: ActorFlowMaterializer, timeout: Timeout): MicroServiceSystem = {
+  def create(resources: List[Restlet], cqrs: CQRS = CQRS.REMIX, forcedContentLengthHeader: Boolean = false)(implicit system: ActorSystem, materializer: ActorMaterializer, timeout: Timeout): MicroServiceSystem = {
     new MicroServiceSystemImpl(resources, cqrs, forcedContentLengthHeader)(system, materializer, timeout)
   }
 }

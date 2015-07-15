@@ -5,9 +5,9 @@ import aims.core.{ Restlet, RestletWrapActor }
 import aims.marshalling.MarshallingActor
 import aims.model.{ Event, Marshalling }
 import akka.actor._
-import akka.http.model.HttpResponse
-import akka.http.model.StatusCodes._
-import akka.http.server._
+import akka.http.scaladsl.model.HttpResponse
+import akka.http.scaladsl.model.StatusCodes._
+import akka.http.scaladsl.server.Directives
 
 import scala.collection.mutable
 

@@ -4,8 +4,8 @@ import aims.core.RestletResult._
 import aims.marshalling.MarshallingActor
 import aims.model.{ Event, Marshalling }
 import akka.actor.{ Actor, ActorSelection, Props }
-import akka.http.model._
-import akka.stream.ActorFlowMaterializer
+import akka.http.scaladsl.model.HttpResponse
+import akka.http.scaladsl.model.StatusCodes._
 
 /**
  * Component:
@@ -24,11 +24,11 @@ class RestletWrapActor(res: Restlet) extends Actor {
   private def execute(event: Event) = {
     try {
       res.handle.applyOrElse(event, unhandle) match {
-        case FromFile(file)       ⇒ file
-        case Complete(response)   ⇒ response
-        case Success(result)      ⇒ result
-        case Rejected(rejections) ⇒ rejections
-        case Failure(causes)      ⇒ causes
+        case FromFile(file)                          ⇒ file
+        case Complete(response)                      ⇒ response
+        case aims.core.RestletResult.Success(result) ⇒ result
+        case Rejected(rejections)                    ⇒ rejections
+        case Failure(causes)                         ⇒ causes
       }
     } catch {
       case e: Throwable ⇒ e
@@ -36,7 +36,7 @@ class RestletWrapActor(res: Restlet) extends Actor {
   }
 
   private def unhandle(event: Event): RestletResult = {
-    RestletResult.Complete(HttpResponse(StatusCodes.NotImplemented, entity = StatusCodes.NotImplemented.defaultMessage))
+    RestletResult.Complete(HttpResponse(NotImplemented, entity = NotImplemented.defaultMessage))
   }
 
 }

@@ -8,7 +8,8 @@ import aims.model.Event
 import aims.routing.PatternMatcher
 import akka.actor.ActorSystem
 import akka.http.model.{ StatusCodes, HttpResponse }
-import akka.stream.ActorFlowMaterializer
+import akka.http.scaladsl.model.{ StatusCodes, HttpResponse }
+import akka.stream.{ ActorMaterializer, ActorFlowMaterializer }
 
 /**
  * Component:
@@ -16,7 +17,7 @@ import akka.stream.ActorFlowMaterializer
  * Date: 15/3/10
  * @author Andy Ai
  */
-class FileUploadRes(implicit val materializer: ActorFlowMaterializer, implicit val system: ActorSystem) extends AttachmentsUploadRestlet {
+class FileUploadRes(implicit val materializer: ActorMaterializer, implicit val system: ActorSystem) extends AttachmentsUploadRestlet {
 
   import system.dispatcher
 

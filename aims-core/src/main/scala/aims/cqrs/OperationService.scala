@@ -5,9 +5,9 @@ import aims.core.RestletResult._
 import aims.model.Event
 import aims.routing.PatternMatcher
 import aims.util.Tuples
-import akka.http.model.HttpMethods._
-import akka.http.model.StatusCodes._
-import akka.http.model.{ HttpMethod, HttpResponse }
+import akka.http.scaladsl.model.HttpMethods._
+import akka.http.scaladsl.model.StatusCodes._
+import akka.http.scaladsl.model.{ HttpMethod, HttpResponse }
 
 /**
  * Component:

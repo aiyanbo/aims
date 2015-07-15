@@ -1,11 +1,11 @@
 package aims.http
 
-import aims.core.{ RestletResult, Restlet }
+import aims.core.{ Restlet, RestletResult }
 import aims.model.Event
 import aims.routing.PatternMatcher
 import aims.routing.PatternMatcher._
-import akka.http.model.HttpMethod
-import akka.http.model.HttpMethods._
+import akka.http.scaladsl.model.HttpMethod
+import akka.http.scaladsl.model.HttpMethods._
 
 /**
  * Component:

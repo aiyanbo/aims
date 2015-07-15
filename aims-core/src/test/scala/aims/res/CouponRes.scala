@@ -4,6 +4,7 @@ import aims.core.Restlet
 import aims.model.Event
 import aims.routing.PatternMatcher
 import akka.http.model.{ HttpMethod, HttpMethods }
+import akka.http.scaladsl.model.{ HttpMethods, HttpMethod }
 
 /**
  * Component:

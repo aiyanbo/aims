@@ -2,6 +2,7 @@ package aims
 
 import aims.core.Annotations.pattern
 import akka.http.model.HttpMethods
+import akka.http.scaladsl.model.HttpMethods
 
 /**
  * Component:

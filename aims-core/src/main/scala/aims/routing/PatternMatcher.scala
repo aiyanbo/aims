@@ -1,10 +1,10 @@
 package aims.routing
 
 import aims.util.Lists
-import akka.http.model.Uri
-import akka.http.model.Uri.Path
-import akka.http.server.PathMatcher
-import akka.http.server.PathMatcher.{ Matched, Unmatched }
+import akka.http.scaladsl.model.Uri
+import akka.http.scaladsl.model.Uri.Path
+import akka.http.scaladsl.server.PathMatcher
+import akka.http.scaladsl.server.PathMatcher.{ Matched, Unmatched }
 
 import scala.collection.mutable.ListBuffer
 import scala.language.implicitConversions

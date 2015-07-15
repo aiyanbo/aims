@@ -3,7 +3,7 @@ package aims.slick
 import aims.core.{ Page, Pagination }
 import aims.cqrs.OperationService
 import aims.model.Event
-import akka.http.model.Uri.Query
+import akka.http.scaladsl.model.Uri.Query
 
 import scala.slick.jdbc.JdbcBackend.{ DatabaseDef, SessionDef }
 

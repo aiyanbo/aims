@@ -1,14 +1,11 @@
 package akka
 
-import java.io.FileOutputStream
-
 import akka.actor.ActorSystem
-import akka.http.Http
-import akka.http.model.HttpResponse
-import akka.http.model.Multipart.FormData
-import akka.http.server.Directives._
-import akka.http.server.RouteResult
-import akka.stream.ActorFlowMaterializer
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.HttpResponse
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.RouteResult
+import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Sink
 import com.google.common.net.HttpHeaders
 
@@ -17,7 +14,7 @@ object TestServer extends App {
 
   import akka.TestServer.system.dispatcher
 
-  implicit val materializer = ActorFlowMaterializer()
+  implicit val materializer = ActorMaterializer()
 
   //  import akka.http.marshallers.xml.ScalaXmlSupport._
 

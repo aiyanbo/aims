@@ -2,7 +2,7 @@ package aims.core
 
 import aims.model.Event
 import aims.routing.PatternMatcher
-import akka.http.model.{ HttpMethod, MediaType, MediaTypes }
+import akka.http.scaladsl.model.{ HttpMethod, MediaType, MediaTypes }
 
 /**
  * Component:

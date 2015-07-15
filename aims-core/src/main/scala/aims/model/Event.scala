@@ -1,8 +1,8 @@
 package aims.model
 
 import akka.actor.ActorRef
-import akka.http.model.HttpRequest
-import akka.http.model.Multipart.FormData
+import akka.http.scaladsl.model.HttpRequest
+import akka.http.scaladsl.model.Multipart.FormData
 
 /**
  * Component:

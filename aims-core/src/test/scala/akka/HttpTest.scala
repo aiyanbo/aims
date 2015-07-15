@@ -2,8 +2,9 @@ package akka
 
 import aims.routing.PatternMatcher
 import aims.routing.Patterns._
-import akka.http.model.Uri.Path
-import akka.http.server.PathMatcher.{ Matched, _ }
+import akka.http.scaladsl.model.Uri.Path
+import akka.http.scaladsl.model.Uri.Path.{ Segment, Slash }
+import akka.http.scaladsl.server.PathMatcher.Matched
 import org.scalatest.FunSuite
 
 /**
@@ -42,10 +43,18 @@ class HttpTest extends FunSuite {
 
   test("Question maker") {
     val matcher = Slash ~ "system" / IntNumber
-    m { matcher.apply(Path("/system")) }
-    m { matcher.apply(Path("/system/123")) }
-    m { matcher.apply(Path("system")) }
-    m { matcher.apply(Path("system/123")) }
+    m {
+      matcher.apply(Path("/system"))
+    }
+    m {
+      matcher.apply(Path("/system/123"))
+    }
+    m {
+      matcher.apply(Path("system"))
+    }
+    m {
+      matcher.apply(Path("system/123"))
+    }
 
   }
 

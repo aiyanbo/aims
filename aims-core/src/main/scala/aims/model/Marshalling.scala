@@ -1,7 +1,7 @@
 package aims.model
 
 import akka.actor.ActorRef
-import akka.http.model.HttpRequest
+import akka.http.scaladsl.model.HttpRequest
 
 /**
  * Component:

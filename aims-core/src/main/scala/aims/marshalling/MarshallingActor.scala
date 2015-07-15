@@ -7,10 +7,10 @@ import aims.core.model.headers.XTotalCount
 import aims.json.Jackson
 import aims.model.Marshalling
 import akka.actor.{ Actor, ActorLogging }
-import akka.http.model.ContentTypes._
-import akka.http.model.StatusCodes._
-import akka.http.model.headers.{ Link, LinkParams, LinkValue }
-import akka.http.model.{ HttpEntity, HttpRequest, HttpResponse }
+import akka.http.scaladsl.model.StatusCodes._
+import akka.http.scaladsl.model.headers._
+import akka.http.scaladsl.model.{ HttpEntity, HttpRequest, HttpResponse }
+import akka.http.scaladsl.model.ContentTypes._
 
 import scala.collection.immutable
 import scala.runtime.BoxedUnit

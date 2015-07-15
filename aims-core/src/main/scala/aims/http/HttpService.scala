@@ -6,12 +6,12 @@ import java.net.URLEncoder
 import aims.core.{ RequestContext, Restlet }
 import aims.routing.RouteActor
 import akka.actor.ActorSystem
-import akka.http.model.Multipart.FormData
-import akka.http.model.headers._
-import akka.http.model.{ HttpResponse, StatusCodes }
-import akka.http.server.{ Directives, Route }
+import akka.http.scaladsl.model.{ StatusCodes, HttpResponse }
+import akka.http.scaladsl.model.Multipart.FormData
+import akka.http.scaladsl.model.headers.{ `Content-Length`, ContentDispositionTypes, `Content-Disposition` }
+import akka.http.scaladsl.server.{ Directives, Route }
 import akka.pattern.ask
-import akka.stream.ActorFlowMaterializer
+import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import com.google.common.base.Charsets
 
@@ -28,7 +28,7 @@ import scala.util.Failure
 trait HttpService extends Directives {
   implicit val system: ActorSystem
   implicit val handlers: List[Restlet]
-  implicit val materializer: ActorFlowMaterializer
+  implicit val materializer: ActorMaterializer
 
   val timeout: Timeout
   val forcedContentLengthHeader: Boolean
@@ -100,7 +100,7 @@ trait HttpService extends Directives {
     }
   }
 
-  private def dispatchRequest(ctx: akka.http.server.RequestContext, payload: Option[String] = None, formData: Option[FormData] = None): Future[HttpResponse] = {
+  private def dispatchRequest(ctx: akka.http.scaladsl.server.RequestContext, payload: Option[String] = None, formData: Option[FormData] = None): Future[HttpResponse] = {
     router.ask(RequestContext(ctx.request, payload, formData))(timeout).collect {
       case response: HttpResponse ⇒ response
       case Failure(exception)     ⇒ HttpResponse(StatusCodes.InternalServerError)
@@ -111,7 +111,7 @@ trait HttpService extends Directives {
 
 class HttpServiceBinding(
   val system: ActorSystem,
-  val materializer: ActorFlowMaterializer,
+  val materializer: ActorMaterializer,
   val handlers: List[Restlet],
   val timeout: Timeout = 5.seconds,
   val forcedContentLengthHeader: Boolean = false) extends HttpService

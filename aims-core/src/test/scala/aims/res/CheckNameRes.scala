@@ -5,6 +5,7 @@ import aims.core.{ Restlet, RestletResult }
 import aims.model.Event
 import aims.routing.PatternMatcher
 import akka.http.model.{ HttpMethod, HttpMethods, HttpResponse, StatusCodes }
+import akka.http.scaladsl.model.{ StatusCodes, HttpResponse, HttpMethods, HttpMethod }
 
 /**
  * Component:

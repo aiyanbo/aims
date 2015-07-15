@@ -1,6 +1,6 @@
 package aims.core.model.headers
 
-import akka.http.model.headers.CustomHeader
+import akka.http.scaladsl.model.headers.CustomHeader
 
 /**
  * Component:

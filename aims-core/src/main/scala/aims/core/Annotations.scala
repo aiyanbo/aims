@@ -1,6 +1,6 @@
 package aims.core
 
-import akka.http.model.{ HttpMethod, HttpMethods, MediaType, MediaTypes }
+import akka.http.scaladsl.model.{ HttpMethod, HttpMethods, MediaType, MediaTypes }
 
 import scala.annotation.StaticAnnotation
 

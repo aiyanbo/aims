@@ -1,8 +1,8 @@
 package aims.core
 
-import akka.http.model.Uri.Query
-import akka.http.model.headers.LinkParams
-import akka.http.model.headers.LinkParams.rel
+import akka.http.scaladsl.model.Uri.Query
+import akka.http.scaladsl.model.headers.LinkParams
+import akka.http.scaladsl.model.headers.LinkParams.rel
 
 /**
  * Component:

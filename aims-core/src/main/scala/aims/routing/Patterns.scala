@@ -1,6 +1,6 @@
 package aims.routing
 
-import akka.http.server.{ PathMatcher, PathMatchers }
+import akka.http.scaladsl.server.{ PathMatcher, PathMatchers }
 
 /**
  * Component:
