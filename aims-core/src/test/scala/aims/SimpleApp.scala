@@ -1,8 +1,8 @@
 package aims
 
-import aims.res.{ FileUploadRes, FileDownloadRes, CheckNameRes, PingRes }
+import aims.res.{CheckNameRes, FileDownloadRes, FileUploadRes, PingRes}
 import akka.actor.ActorSystem
-import akka.stream.{ ActorMaterializer, ActorFlowMaterializer }
+import akka.stream.ActorMaterializer
 import akka.util.Timeout
 
 import scala.concurrent.duration._

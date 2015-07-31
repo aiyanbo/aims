@@ -1,6 +1,6 @@
 package aims.res
 
-import java.io.{ FileOutputStream, File }
+import java.io.{File, FileOutputStream}
 import java.nio.file.Files
 
 import aims.http.AttachmentsDownloadRestlet
