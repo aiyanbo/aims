@@ -1,6 +1,6 @@
 package aims
 
-import aims.res.{CheckNameRes, FileDownloadRes, FileUploadRes, PingRes}
+import aims.res.{ CheckNameRes, FileDownloadRes, FileUploadRes, PingRes }
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import akka.util.Timeout

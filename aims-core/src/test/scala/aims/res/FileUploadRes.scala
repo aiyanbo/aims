@@ -1,13 +1,13 @@
 package aims.res
 
-import java.io.{File, FileOutputStream}
+import java.io.{ File, FileOutputStream }
 
 import aims.core.RestletResult
 import aims.http.AttachmentsUploadRestlet
 import aims.model.Event
 import aims.routing.PatternMatcher
 import akka.actor.ActorSystem
-import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
+import akka.http.scaladsl.model.{ HttpResponse, StatusCodes }
 import akka.stream.ActorMaterializer
 
 /**
